@@ -1,0 +1,220 @@
+/* ========= EFEITOS DE TEXTO ========= */
+
+/* Efeito: Cor Verde */
+.effect-green {
+    color: green;
+    font-weight: 900;
+  }
+  
+  /* Efeito: Itálico */
+  .effect-italic {
+    font-style: italic;
+  }
+  
+  /* Efeito: Sublinhado */
+  .effect-underline {
+    text-decoration: underline;
+  }
+  
+  /* Efeito: Animação piscando */
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  
+  .effect-blink {
+    animation: blink 1s infinite;
+  }
+  
+  /* Efeito: Sombras */
+  .effect-shadow {
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Efeito: Texto aumentado */
+  .effect-big {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  
+  /* Efeito: Fade In (Aparece suavemente) */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .effect-fade {
+    animation: fadeIn 2s ease-in-out;
+  }
+  
+  /* Efeito: Texto pulsando */
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+  
+  .effect-pulse {
+    animation: pulse 1.5s infinite;
+  }
+  
+  /* Efeito: Slide da esquerda */
+  @keyframes slideLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .effect-slide-left {
+    animation: slideLeft 1s ease-in-out;
+  }
+  
+  /* Efeito: Slide da direita */
+  @keyframes slideRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .effect-slide-right {
+    animation: slideRight 1s ease-in-out;
+  }
+  
+  /* Efeito: Rotação */
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .effect-rotate {
+    display: inline-block;
+    animation: rotate 3s linear infinite;
+  }
+  
+
+
+  /* ========= EFEITOS DE TEXTO ========= */
+
+/* Efeito: Letras pulando individualmente */
+@keyframes jumpLetters {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .effect-jump span {
+    display: inline-block;
+    animation: jumpLetters 0.4s infinite alternate;
+  }
+  
+  .effect-jump span:nth-child(2) { animation-delay: 0.1s; }
+  .effect-jump span:nth-child(3) { animation-delay: 0.2s; }
+  .effect-jump span:nth-child(4) { animation-delay: 0.3s; }
+  .effect-jump span:nth-child(5) { animation-delay: 0.4s; }
+  
+  /* Efeito: Digitando rápido */
+  @keyframes typingSpeed {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  .effect-typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid black;
+    display: inline-block;
+    width: 0;
+    animation: typingSpeed 1.5s steps(20, end) forwards;
+  }
+  
+  /* Efeito: Tremor */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
+  }
+  
+  .effect-shake {
+    display: inline-block;
+    animation: shake 0.3s infinite;
+  }
+  
+  /* Efeito: Tremor Lento */
+  @keyframes slowShake {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-2px); }
+  }
+  
+  .effect-slow-shake {
+    display: inline-block;
+    animation: slowShake 1s infinite;
+  }
+  
+  /* Efeito: Explosão de entrada */
+  @keyframes explodeIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  .effect-explode {
+    animation: explodeIn 0.5s ease-out;
+  }
+  
+  /* Efeito: Iluminação rápida */
+  @keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+  
+  .effect-flash {
+    animation: flash 0.5s infinite alternate;
+  }
+  
+  /* Efeito: Entrada com velocidade */
+  @keyframes speedEntry {
+    from { transform: translateX(200px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .effect-speed {
+    animation: speedEntry 0.3s ease-out;
+  }
+  
+  /* Efeito: Letras girando */
+  @keyframes spinLetters {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+  }
+  
+  .effect-spin span {
+    display: inline-block;
+    animation: spinLetters 1s linear infinite;
+  }
+  
+  .effect-spin span:nth-child(2) { animation-delay: 0.1s; }
+  .effect-spin span:nth-child(3) { animation-delay: 0.2s; }
+  .effect-spin span:nth-child(4) { animation-delay: 0.3s; }
+  .effect-spin span:nth-child(5) { animation-delay: 0.4s; }
+  

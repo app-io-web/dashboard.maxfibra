@@ -1,0 +1,46 @@
+.dynamic-phrase {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  color: #222;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+/* Efeito: Cor Verde */
+.effect-green {
+  color: green;
+  font-weight: 900;
+}
+
+/* Efeito: Itálico */
+.effect-italic {
+  font-style: italic;
+}
+
+/* Efeito: Sublinhado */
+.effect-underline {
+  text-decoration: underline;
+}
+
+/* Efeito: Animação piscando */
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.effect-blink {
+  animation: blink 1s infinite;
+}
+
+/* Efeito: Sombras */
+.effect-shadow {
+  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Efeito: Texto aumentado */
+.effect-big {
+  font-size: 30px;
+  font-weight: bold;
+}
