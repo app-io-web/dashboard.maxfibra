@@ -1,7 +1,7 @@
 // public/service-worker.js
 
 // Versão do SW (muda isso quando fizer mudança grande no cache)
-const SW_VERSION = "central-admin-v1";
+const SW_VERSION = "central-admin-v2"; // <<-- bump pra forçar tudo a atualizar
 const CACHE_NAME = `central-admin-cache-${SW_VERSION}`;
 
 console.log("[SW] Versão carregada:", SW_VERSION);
@@ -58,9 +58,24 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
+  const acceptHeader = request.headers.get("accept") || "";
 
-  // Não cacheia chamadas de API ou notificações
-  if (url.pathname.startsWith("/api") || url.pathname.startsWith("/notifications")) {
+  // ============================
+  // NUNCA MEXER EM:
+  // - chamadas de API (/api)
+  // - notificações
+  // - rotas de auth (/auth, /login, /me)
+  // - qualquer coisa que peça JSON (Accept: application/json)
+  // ============================
+  if (
+    url.pathname.startsWith("/api") ||
+    url.pathname.startsWith("/notifications") ||
+    url.pathname.startsWith("/auth") ||
+    url.pathname === "/login" ||
+    url.pathname === "/me" ||
+    acceptHeader.includes("application/json")
+  ) {
+    // deixa passar direto pro network, sem cache especial
     return;
   }
 
@@ -108,11 +123,8 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-
-
 // =======================
 // PUSH NOTIFICATIONS
-// (sua lógica original + ajustes de ícone)
 // =======================
 
 self.addEventListener("push", (event) => {
@@ -131,7 +143,6 @@ self.addEventListener("push", (event) => {
 
   const options = {
     body,
-    // ícones alinhados com o que colocamos na pasta /icons
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
     data: {
@@ -140,13 +151,11 @@ self.addEventListener("push", (event) => {
     },
   };
 
-  // 1) mostra a notificação normal
   const showNotificationPromise = self.registration.showNotification(
     title,
     options
   );
 
-  // 2) avisa as abas abertas
   const broadcastPromise = self.clients
     .matchAll({ type: "window", includeUncontrolled: true })
     .then((clientList) => {
@@ -157,7 +166,7 @@ self.addEventListener("push", (event) => {
           title,
           body,
           url,
-          data: data.data || {}, // { type: "cadastro_ficha", protocolo, ... }
+          data: data.data || {},
         });
       }
     });
