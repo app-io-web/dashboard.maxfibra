@@ -51,7 +51,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// FETCH: cache-first para assets, network para API
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
@@ -66,40 +65,49 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    (async () => {
+      // 1) tenta cache primeiro
+      const cached = await caches.match(request);
+      if (cached) {
+        return cached;
       }
 
-      // senão, busca na rede e guarda no cache
-      return fetch(request)
-        .then((response) => {
-          // só cacheia resposta ok
-          if (!response || response.status !== 200 || response.type === "opaque") {
-            return response;
-          }
+      try {
+        // 2) tenta rede
+        const response = await fetch(request);
 
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseToCache);
-          });
-
+        // só cacheia se for 200 "normal"
+        if (!response || response.status !== 200 || response.type === "opaque") {
           return response;
-        })
-        .catch((err) => {
-          console.warn("[SW] Fetch falhou, talvez offline:", err);
+        }
 
-          // se for navegação, tentar voltar pro index.html (SPA)
-          if (request.mode === "navigate") {
-            return caches.match("/index.html");
-          }
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, response.clone());
 
-          // senão, tenta algo básico
-          return caches.match(request);
+        return response;
+      } catch (err) {
+        console.warn("[SW] Fetch falhou, talvez offline:", err);
+
+        // 3) fallback pra navegação SPA
+        if (request.mode === "navigate") {
+          const fallbackIndex = await caches.match("/index.html");
+          if (fallbackIndex) return fallbackIndex;
+        }
+
+        // 4) tenta de novo o cache desse request
+        const fallbackCache = await caches.match(request);
+        if (fallbackCache) return fallbackCache;
+
+        // 5) ÚLTIMO RECURSO: devolve SEMPRE uma Response válida
+        return new Response("Offline ou servidor indisponível.", {
+          status: 503,
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
         });
-    })
+      }
+    })()
   );
 });
+
 
 
 // =======================
