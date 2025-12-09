@@ -1,7 +1,7 @@
 // public/service-worker.js
 
 // Versão do SW (muda isso quando fizer mudança grande no cache)
-const SW_VERSION = "central-admin-v2"; // <<-- bump pra forçar tudo a atualizar
+const SW_VERSION = "central-admin-v3"; // <<-- bump pra forçar tudo a atualizar
 const CACHE_NAME = `central-admin-cache-${SW_VERSION}`;
 
 console.log("[SW] Versão carregada:", SW_VERSION);
@@ -60,13 +60,16 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   const acceptHeader = request.headers.get("accept") || "";
 
-  // ============================
-  // NUNCA MEXER EM:
+  // 1) NÃO intercepta requisições de outro domínio
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // 2) NÃO mexer em:
   // - chamadas de API (/api)
-  // - notificações
+  // - notificações (/notifications)
   // - rotas de auth (/auth, /login, /me)
   // - qualquer coisa que peça JSON (Accept: application/json)
-  // ============================
   if (
     url.pathname.startsWith("/api") ||
     url.pathname.startsWith("/notifications") ||
@@ -75,23 +78,44 @@ self.addEventListener("fetch", (event) => {
     url.pathname === "/me" ||
     acceptHeader.includes("application/json")
   ) {
-    // deixa passar direto pro network, sem cache especial
     return;
   }
 
+  // 3) Navegação SPA: SEMPRE responder com index.html
+  if (request.mode === "navigate" && acceptHeader.includes("text/html")) {
+    event.respondWith(
+      (async () => {
+        // tenta pegar do cache primeiro
+        const cachedIndex = await caches.match("/index.html");
+        if (cachedIndex) {
+          return cachedIndex;
+        }
+
+        // se não tiver no cache, busca da rede e salva
+        const response = await fetch("/index.html");
+        try {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put("/index.html", response.clone());
+        } catch (err) {
+          console.warn("[SW] Erro ao cachear index.html:", err);
+        }
+        return response;
+      })()
+    );
+    return;
+  }
+
+  // 4) Demais recursos estáticos: cache first com fallback pra rede
   event.respondWith(
     (async () => {
-      // 1) tenta cache primeiro
       const cached = await caches.match(request);
       if (cached) {
         return cached;
       }
 
       try {
-        // 2) tenta rede
         const response = await fetch(request);
 
-        // só cacheia se for 200 "normal"
         if (!response || response.status !== 200 || response.type === "opaque") {
           return response;
         }
@@ -103,17 +127,16 @@ self.addEventListener("fetch", (event) => {
       } catch (err) {
         console.warn("[SW] Fetch falhou, talvez offline:", err);
 
-        // 3) fallback pra navegação SPA
+        // tenta de novo o cache desse request
+        const fallbackCache = await caches.match(request);
+        if (fallbackCache) return fallbackCache;
+
+        // se for navegação e não tiver nada, tenta index.html
         if (request.mode === "navigate") {
           const fallbackIndex = await caches.match("/index.html");
           if (fallbackIndex) return fallbackIndex;
         }
 
-        // 4) tenta de novo o cache desse request
-        const fallbackCache = await caches.match(request);
-        if (fallbackCache) return fallbackCache;
-
-        // 5) ÚLTIMO RECURSO: devolve SEMPRE uma Response válida
         return new Response("Offline ou servidor indisponível.", {
           status: 503,
           headers: { "Content-Type": "text/plain; charset=utf-8" },
