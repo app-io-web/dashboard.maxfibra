@@ -1,18 +1,18 @@
 // src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";   // 👈 troquei aqui!
 import App from "./App";
-import "./index.css";
-import "./styles_inboard/DynamicPhrase.css"
-import "./styles_inboard/TextEffects.css"; // 👈 IMPORTANTE: efeitos (jump, spin, etc.)
 
+import "./index.css";
+import "./styles_inboard/DynamicPhrase.css";
+import "./styles_inboard/TextEffects.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>        {/* 👈 e aqui também */}
       <App />
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 );
 
