@@ -7,9 +7,10 @@ import { api } from "../lib/api";
 import { UpdateOverlay } from "../components/auth/UpdateOverlay";
 import { useSwUpdateFlow } from "../hooks/useSwUpdateFlow";
 
-type ActiveTab = "login" | "firstAccess";
+// ✅ ADD
+import { useSession } from "../contexts/SessionContext";
 
-const POST_LOGIN_REFRESH_KEY = "mx_post_login_refresh_v1";
+type ActiveTab = "login" | "firstAccess";
 
 function sleep(ms: number) {
   return new Promise<void>((res) => setTimeout(res, ms));
@@ -17,6 +18,9 @@ function sleep(ms: number) {
 
 export function LoginPage() {
   const navigate = useNavigate();
+
+  // ✅ sessão (pra matar o bug do menu travado no primeiro login)
+  const { refreshPermissions, refreshBranding } = useSession();
 
   // 🔥 fluxo SW update (overlay + steps)
   const swFlow = useSwUpdateFlow();
@@ -109,9 +113,11 @@ export function LoginPage() {
         // login real
         await login(loginEmail, loginPassword);
 
-        // progresso pós-login (aqui é visual, mas “honesto”)
+        // ✅ AQUI É O PULO DO GATO:
+        // força SessionContext carregar permissões/branding ANTES do dashboard montar
         markDone(1);
-        await sleep(180);
+        await refreshPermissions();
+        await refreshBranding();
 
         // ✅ FINALIZA 100% ANTES DE NAVEGAR
         setAllDone();
@@ -121,9 +127,6 @@ export function LoginPage() {
         const elapsed = Date.now() - startedAt;
         const remaining = Math.max(LOGIN_OVERLAY_MIN_MS - elapsed, 0);
         if (remaining) await sleep(remaining);
-
-        // marca pra dar refresh UMA vez depois que entrar no dashboard
-        sessionStorage.setItem(POST_LOGIN_REFRESH_KEY, "1");
 
         // navega (agora sim)
         navigate("/dashboard", { replace: true });

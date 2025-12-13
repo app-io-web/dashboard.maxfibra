@@ -1,5 +1,12 @@
 // src/contexts/SessionContext.tsx
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { api } from "../lib/api";
 
 type EmpresaBranding = {
@@ -50,12 +57,14 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [permissions, setPermissions] = useState<string[]>([]);
-  const [permissionsLoading, setPermissionsLoading] = useState(false);
+  const [permissionsLoading, setPermissionsLoading] = useState(true);
 
-  const [empresaBranding, setEmpresaBranding] = useState<EmpresaBranding | null>(null);
+  const [empresaBranding, setEmpresaBranding] = useState<EmpresaBranding | null>(
+    null
+  );
   const [brandingLoading, setBrandingLoading] = useState(false);
 
-  // ✅ padrão: toda request vai “saber” a empresa atual (sem gambiarras em cada chamada)
+  // ✅ padrão: toda request vai “saber” a empresa atual
   useEffect(() => {
     if (empresaId) {
       api.defaults.headers.common["x-empresa-id"] = empresaId;
@@ -83,46 +92,65 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // 🔥 endpoint sugerido: GET /auth/permissions?empresaId=...
-  // se você já tiver outro (ex: /empresa/permissions), troca aqui.
-  // 🔥 tenta múltiplos endpoints até achar o que existe
-        const refreshPermissions = useCallback(async () => {
-        try {
-            setPermissionsLoading(true);
+  /**
+   * ✅ PERMISSÕES NÃO PODEM DEPENDER DE empresaId,
+   * senão no primeiro login o menu nasce travado.
+   *
+   * Usa /me como fonte de verdade e, se vier uma empresa padrão,
+   * seta automaticamente.
+   */
+  const refreshPermissions = useCallback(async () => {
+    try {
+      setPermissionsLoading(true);
 
-            // sem empresa definida, zera e pronto
-            if (!empresaId) {
-            setPermissions([]);
-            return;
-            }
+      const res = await api.get("/me");
 
-            // ✅ usa /me como fonte de verdade
-            const res = await api.get("/me");
+      const perms = res.data?.user?.permissions;
+      setPermissions(Array.isArray(perms) ? perms : []);
 
-            const perms = res.data?.user?.permissions;
-            setPermissions(Array.isArray(perms) ? perms : []);
-        } catch (err) {
-            console.error("[Session] erro ao atualizar permissions via /me:", err);
-            setPermissions([]);
-        } finally {
-            setPermissionsLoading(false);
-        }
-        }, [empresaId]);
+      // ✅ tenta descobrir empresa padrão/atual pelo /me
+      // (ajusta os campos conforme teu backend)
+      const suggestedEmpresaId =
+        res.data?.user?.empresa_id ??
+        res.data?.user?.auth_empresa_id ??
+        res.data?.empresa_id ??
+        res.data?.empresaId ??
+        null;
 
+      // só seta se ainda não tem empresa definida
+      if (!empresaId && suggestedEmpresaId) {
+        setEmpresaId(String(suggestedEmpresaId));
+      }
+    } catch (err) {
+      console.error("[Session] erro ao atualizar permissions via /me:", err);
+      setPermissions([]);
+    } finally {
+      setPermissionsLoading(false);
+    }
+  }, [empresaId, setEmpresaId]);
 
-
-  // Branding (usa teu endpoint atual /empresa/settings)
+  /**
+   * Branding (usa /empresa/settings) — só faz sentido com empresaId.
+   */
   const refreshBranding = useCallback(async () => {
+    // ✅ sem empresa, sem branding (e evita request sem header)
+    if (!empresaId) {
+      setEmpresaBranding(null);
+      document.title = "Central Admin";
+      updateFavicon("/vite.svg");
+      return;
+    }
+
     try {
       setBrandingLoading(true);
 
-      // se sua API já usa x-empresa-id, beleza.
-      const res = await api.get<{ empresaSettings: EmpresaBranding | null }>("/empresa/settings");
+      const res = await api.get<{ empresaSettings: EmpresaBranding | null }>(
+        "/empresa/settings"
+      );
 
       const b = res.data?.empresaSettings ?? null;
       setEmpresaBranding(b);
 
-      // título + favicon já ficam acoplados aqui (global de verdade)
       if (b?.display_name) document.title = `${b.display_name} • Central Admin`;
       else document.title = "Central Admin";
 
@@ -136,13 +164,19 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setBrandingLoading(false);
     }
-  }, []);
+  }, [empresaId]);
 
-  // ✅ efeito GLOBAL: mudou empresa -> refaz permissions + branding
+  // ✅ 1) na primeira montagem: busca permissões logo de cara
   useEffect(() => {
     refreshPermissions();
+  }, [refreshPermissions]);
+
+  // ✅ 2) mudou empresa -> refaz branding (e se teu backend filtra permissão por empresa, refaz tb)
+  useEffect(() => {
     refreshBranding();
-  }, [empresaId, refreshPermissions, refreshBranding]);
+    // se as permissões mudam por empresa, deixa ligado:
+    refreshPermissions();
+  }, [empresaId, refreshBranding, refreshPermissions]);
 
   const value = useMemo<SessionState>(
     () => ({
@@ -169,11 +203,14 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     ]
   );
 
-  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
+  return (
+    <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
+  );
 }
 
 export function useSession() {
   const ctx = useContext(SessionContext);
-  if (!ctx) throw new Error("useSession precisa estar dentro de <SessionProvider />");
+  if (!ctx)
+    throw new Error("useSession precisa estar dentro de <SessionProvider />");
   return ctx;
 }
