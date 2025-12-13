@@ -512,10 +512,92 @@ export function IxcInternetBlockedReportPage({
             </div>
           )}
 
-          {/* Tabela */}
+          {/* Tabela / Lista responsiva */}
           {canViewTable ? (
             <>
-              <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              {/* MOBILE / TABLET PEQUENO: CARDS */}
+              <div className="space-y-3 md:hidden">
+                {paginatedRecords.length === 0 ? (
+                  <div className="rounded-2xl border border-slate-200 bg-white px-3 py-4 text-center text-sm text-slate-500">
+                    Nenhum contrato encontrado com os filtros atuais.
+                  </div>
+                ) : (
+                  paginatedRecords.map((item) => (
+                    <div
+                      key={`${item.contrato_id}-${item.id_cliente}`}
+                      className="rounded-2xl border border-slate-200 bg-white px-3 py-3 shadow-sm"
+                    >
+                      {/* Cabeçalho: Cliente */}
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm font-semibold text-slate-900">
+                          {item.cliente_nome || "-"}
+                        </span>
+                        {item.cliente_cpf_cnpj && (
+                          <span className="text-xs text-slate-500">
+                            {item.cliente_cpf_cnpj}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Status internet + contrato */}
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span
+                          className={statusInternetBadgeClass(
+                            item.status_internet
+                          )}
+                        >
+                          {getStatusInternetLabel(item.status_internet)}
+                        </span>
+                        <span className="text-[11px] text-slate-400">
+                          Status contrato:{" "}
+                          <span className="font-medium">
+                            {item.status_contrato || "-"}
+                          </span>
+                        </span>
+                      </div>
+
+                      {/* IDs */}
+                      <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                        <div>
+                          <span className="block text-slate-400">
+                            Contrato
+                          </span>
+                          <span className="font-mono font-semibold">
+                            {item.contrato_id}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="block text-slate-400">
+                            Cliente ID
+                          </span>
+                          <span className="font-mono">
+                            {item.id_cliente}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Telefones */}
+                      <div className="mt-2 space-y-0.5 text-[11px] text-slate-600">
+                        <p>
+                          <span className="text-slate-400">
+                            Telefone comercial:{" "}
+                          </span>
+                          {item.cliente_telefone_1 || "-"}
+                        </p>
+                        <p>
+                          <span className="text-slate-400">
+                            Telefone celular:{" "}
+                          </span>
+                          {item.cliente_telefone_2 || "-"}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* DESKTOP / TABLET LANDSCAPE: TABELA */}
+              <div className="hidden md:block rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-slate-200">
                     <thead className="bg-slate-50">
@@ -620,7 +702,7 @@ export function IxcInternetBlockedReportPage({
                   </table>
                 </div>
 
-                {/* Paginação */}
+                {/* Paginação (desktop) */}
                 {totalFiltrado > 0 && (
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100 px-3 py-2.5 text-xs text-slate-500">
                     <span>
@@ -667,8 +749,54 @@ export function IxcInternetBlockedReportPage({
                 )}
               </div>
 
+              {/* Paginação MOBILE (mesma lógica, mas separada do bloco hidden md:block) */}
+              {totalFiltrado > 0 && (
+                <div className="md:hidden mt-3 flex flex-col xs:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+                  <span>
+                    Página{" "}
+                    <span className="font-semibold">
+                      {currentSafePage}
+                    </span>{" "}
+                    de{" "}
+                    <span className="font-semibold">{totalPages}</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={currentSafePage === 1}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(1, prev - 1))
+                      }
+                      className={`px-2.5 py-1 rounded-full border text-xs inline-flex items-center gap-1 ${
+                        currentSafePage === 1
+                          ? "border-slate-200 text-slate-300 cursor-not-allowed"
+                          : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      Anterior
+                    </button>
+                    <button
+                      type="button"
+                      disabled={currentSafePage === totalPages}
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.min(totalPages, prev + 1)
+                        )
+                      }
+                      className={`px-2.5 py-1 rounded-full border text-xs inline-flex items-center gap-1 ${
+                        currentSafePage === totalPages
+                          ? "border-slate-200 text-slate-300 cursor-not-allowed"
+                          : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      Próxima
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Legendinha dos códigos */}
-              <div className="rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-[11px] text-slate-500 flex flex-wrap items-center gap-3">
+              <div className="mt-3 rounded-2xl border border-slate-100 bg-slate-50 px-3 py-2 text-[11px] text-slate-500 flex flex-wrap items-center gap-3">
                 <span className="font-semibold uppercase tracking-wide">
                   Legenda status internet:
                 </span>
@@ -679,8 +807,7 @@ export function IxcInternetBlockedReportPage({
                   <span className="font-semibold">CA</span>: corte automático
                 </span>
                 <span>
-                  <span className="font-semibold">FA</span>: bloqueio
-                  financeiro
+                  <span className="font-semibold">FA</span>: bloqueio financeiro
                 </span>
               </div>
             </>
@@ -690,6 +817,7 @@ export function IxcInternetBlockedReportPage({
               bloqueados.
             </div>
           )}
+
         </div>
       </div>
 

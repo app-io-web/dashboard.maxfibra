@@ -1,15 +1,13 @@
-// src/config/useEffects/useGlobalSettingsPermissions.ts
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../../lib/api";
+import { useSession } from "../../contexts/SessionContext";
 import {
   canAccessGlobalSettings,
   type GlobalSettingsActionId,
 } from "../globalSettingsPermissions";
-import { getCurrentUser } from "../../lib/auth";
 
 type EmpresaSettings = {
   global_permission_keys?: string[];
-  // outros campos se quiser tipar
 };
 
 type EmpresaSettingsApiResponse = {
@@ -18,67 +16,71 @@ type EmpresaSettingsApiResponse = {
 };
 
 export function useGlobalSettingsPermissions() {
-  const [keys, setKeys] = useState<string[] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { empresaId, permissions, permissionsLoading } = useSession();
+
+  const [extraKeys, setExtraKeys] = useState<string[]>([]);
+  const [loadingExtra, setLoadingExtra] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let isMounted = true;
+  const baseKeys = useMemo(
+    () => (Array.isArray(permissions) ? permissions : []),
+    [permissions]
+  );
 
-    async function load() {
-      setLoading(true);
+  const reloadExtra = useCallback(async () => {
+    try {
+      setLoadingExtra(true);
       setError(null);
 
-      try {
-        // 👇 começa pelas permissões que JÁ vieram no login (/login ou /me)
-        const currentUser = getCurrentUser();
-        let incoming: string[] = Array.isArray(currentUser?.permissions)
-          ? currentUser!.permissions
-          : [];
-
-        // 🔎 tenta complementar com o que vier do /empresa/settings
-        const res = await api.get<EmpresaSettingsApiResponse>("/empresa/settings");
-        if (!isMounted) return;
-
-        // topo direto
-        if (Array.isArray(res.data.global_permission_keys)) {
-          incoming = incoming.concat(res.data.global_permission_keys);
-        }
-
-        // dentro de empresaSettings
-        const fromEmpresa = res.data.empresaSettings?.global_permission_keys;
-        if (Array.isArray(fromEmpresa)) {
-          incoming = incoming.concat(fromEmpresa);
-        }
-
-        // remove duplicadas
-        const unique = Array.from(new Set(incoming));
-
-
-        setKeys(unique);
-      } catch (err) {
-        console.error("[GLOBAL SETTINGS] erro ao carregar permissões:", err);
-        if (!isMounted) return;
-        setError("Erro ao carregar permissões globais.");
-        setKeys([]);
-      } finally {
-        if (isMounted) setLoading(false);
+      // Sem empresa selecionada, não tem o que buscar de /empresa/settings
+      if (!empresaId) {
+        setExtraKeys([]);
+        return;
       }
+
+      const res = await api.get<EmpresaSettingsApiResponse>("/empresa/settings");
+
+      const incoming: string[] = [];
+
+      if (Array.isArray(res.data.global_permission_keys)) {
+        incoming.push(...res.data.global_permission_keys);
+      }
+
+      const fromEmpresa = res.data.empresaSettings?.global_permission_keys;
+      if (Array.isArray(fromEmpresa)) {
+        incoming.push(...fromEmpresa);
+      }
+
+      setExtraKeys(Array.from(new Set(incoming)));
+    } catch (err) {
+      console.error("[GLOBAL SETTINGS] erro ao carregar permissões extras:", err);
+      setError("Erro ao carregar permissões globais.");
+      setExtraKeys([]);
+    } finally {
+      setLoadingExtra(false);
     }
+  }, [empresaId]);
 
-    load();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  // 🔥 mudou empresa (contexto) -> refaz o extra (porque /empresa/settings depende da empresa)
+  useEffect(() => {
+    reloadExtra();
+  }, [reloadExtra]);
 
-  const can = (action: GlobalSettingsActionId) =>
-    canAccessGlobalSettings(keys || [], action);
+  // merge final (contexto + extras)
+  const keys = useMemo(() => {
+    return Array.from(new Set([...baseKeys, ...extraKeys]));
+  }, [baseKeys, extraKeys]);
+
+  const can = useCallback(
+    (action: GlobalSettingsActionId) => canAccessGlobalSettings(keys, action),
+    [keys]
+  );
 
   return {
-    loading,
+    loading: permissionsLoading || loadingExtra,
     error,
-    keys: keys || [],
+    keys,
     can,
+    reload: reloadExtra, // caso você altere settings e queira refletir na hora
   };
 }

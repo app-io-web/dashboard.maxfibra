@@ -7,11 +7,13 @@ type EmpresaUser = {
   id: string;
   auth_user_id: string;
   display_name: string | null;
+  name?: string | null; // ✅ AQUI (vem do backend)
   avatar_url: string | null;
   is_central_admin: boolean;
   role: string | null;
   can_link_other_empresas?: boolean;
 };
+
 
 type EditFormState = {
   display_name: string;

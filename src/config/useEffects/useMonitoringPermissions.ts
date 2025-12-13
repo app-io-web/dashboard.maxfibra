@@ -1,22 +1,26 @@
-// src/config/useEffects/useMonitoringPermissions.ts
 import { useMemo } from "react";
 import { resolveMonitoringPermissions } from "../monitoringPermissions";
-import { getCurrentUser } from "../../lib/auth";
+import { useSession } from "../../contexts/SessionContext";
 
 // reaproveita o tipo a partir do retorno da função
-type MonitoringResolvedPermissions = ReturnType<typeof resolveMonitoringPermissions>;
+type MonitoringResolvedPermissions = ReturnType<
+  typeof resolveMonitoringPermissions
+>;
 
 export function useMonitoringPermissions(): MonitoringResolvedPermissions {
-  const user = getCurrentUser() as (ReturnType<typeof getCurrentUser> & {
-    permissions?: string[];
-  }) | null;
+  const { permissions, permissionsLoading } = useSession();
 
-  const permissionKeys = user?.permissions ?? [];
+  const permissionKeys = useMemo(
+    () => (Array.isArray(permissions) ? permissions : []),
+    [permissions]
+  );
 
   const resolved = useMemo(
     () => resolveMonitoringPermissions(permissionKeys),
     [permissionKeys]
   );
 
-  return resolved;
+  return {
+    ...resolved,
+  };
 }

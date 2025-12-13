@@ -24,7 +24,19 @@ export function DashboardShortcutCard({ shortcut }: Props) {
   const title = shortcut.titulo || host;
 
   return (
-    <div className="flex items-stretch gap-3 rounded-2xl bg-white shadow-sm border border-slate-100 px-3 py-3 hover:shadow-md transition">
+    <a
+      href={shortcut.url}
+      target="_blank"
+      rel="noreferrer"
+      className="
+        group
+        flex items-stretch gap-3 rounded-2xl bg-white shadow-sm border border-slate-100
+        px-3 py-3 hover:shadow-md transition
+        cursor-pointer
+        focus:outline-none focus:ring-2 focus:ring-sky-500/40
+      "
+      aria-label={`Abrir atalho: ${title}`}
+    >
       {/* Imagem / avatar */}
       {shortcut.img_url ? (
         <div className="flex-shrink-0">
@@ -72,11 +84,13 @@ export function DashboardShortcutCard({ shortcut }: Props) {
         )}
 
         <div className="mt-2 flex items-center justify-end">
-          <a
-            href={shortcut.url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-md bg-sky-500 text-white hover:bg-sky-600 transition"
+          {/* "Botão" visual (sem <a> dentro de <a>) */}
+          <span
+            className="
+              inline-flex items-center gap-1 text-[11px] px-3 py-1 rounded-md
+              bg-sky-500 text-white transition
+              group-hover:bg-sky-600
+            "
           >
             Abrir
             <svg
@@ -84,6 +98,7 @@ export function DashboardShortcutCard({ shortcut }: Props) {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 d="M7 17L17 7M9 7h8v8"
@@ -92,9 +107,9 @@ export function DashboardShortcutCard({ shortcut }: Props) {
                 strokeLinejoin="round"
               />
             </svg>
-          </a>
+          </span>
         </div>
       </div>
-    </div>
+    </a>
   );
 }

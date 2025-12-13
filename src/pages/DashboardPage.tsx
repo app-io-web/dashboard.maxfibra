@@ -11,32 +11,23 @@ import { useDashboardPinnedNotes } from "../config/useEffects/useDashboardPinned
 import { useDashboardShortcuts } from "../config/useEffects/useDashboardShortcuts";
 import { useDashboardBirthdays } from "../config/useEffects/useDashboardBirthdays";
 
-// 👇 novo hook pra permissões globais
+// Permissões globais
 import { useGlobalSettingsPermissions } from "../config/useEffects/useGlobalSettingsPermissions";
 
-// 👇 card novo de monitoramento SmartOLT
+// Card SmartOLT
 import { MonitoringEquipmentSummaryCard } from "../components/monitoramento/MonitoringEquipmentSummaryCard";
+import { useSession } from "../contexts/SessionContext"; // ajuste o path se necessário
 
-type ServerStatus = {
-  id: string;
-  name: string;
-  status: "online" | "warning" | "offline";
-  latencyMs: number;
-};
-
-// se quiser, depois esses também podem virar API
-const mockServers: ServerStatus[] = [
-  { id: "1", name: "VPS Principal", status: "online", latencyMs: 42 },
-  { id: "2", name: "Servidor Backup", status: "warning", latencyMs: 180 },
-];
 
 export function DashboardPage() {
-  const totalOnline = mockServers.filter((s) => s.status === "online").length;
-
   // 👉 contadores reais do SmartOLT (desligados / LOS)
   const [offlineCount, setOfflineCount] = useState(0);
   const [losCount, setLosCount] = useState(0);
   const [monitoringError, setMonitoringError] = useState<string | null>(null);
+  const { empresaId } = useSession();
+
+  // 👉 quando a empresa NÃO tem monitoramento configurado / sem dados
+  const [monitoringUnavailable, setMonitoringUnavailable] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,6 +35,7 @@ export function DashboardPage() {
     async function loadSmartOltSummary() {
       try {
         setMonitoringError(null);
+        setMonitoringUnavailable(false);
 
         const [offRes, losRes] = await Promise.all([
           api.get("/monitoring/smart-short-olt"),
@@ -52,19 +44,40 @@ export function DashboardPage() {
 
         if (cancelled) return;
 
-        const off = Array.isArray(offRes.data?.onus)
-          ? offRes.data.onus.length
-          : 0;
+        const offOnus = Array.isArray(offRes.data?.onus)
+          ? offRes.data.onus
+          : [];
+        const losOnus = Array.isArray(losRes.data?.onus)
+          ? losRes.data.onus
+          : [];
 
-        const los = Array.isArray(losRes.data?.onus)
-          ? losRes.data.onus.length
-          : 0;
+        // 👉 se não veio NENHUMA ONU pra essa empresa, tratamos como
+        // "monitoramento não ativo pra empresa selecionada"
+        if (offOnus.length === 0 && losOnus.length === 0) {
+          setMonitoringUnavailable(true);
+          setOfflineCount(0);
+          setLosCount(0);
+          return;
+        }
 
-        setOfflineCount(off);
-        setLosCount(los);
-      } catch (err) {
+        setOfflineCount(offOnus.length);
+        setLosCount(losOnus.length);
+        setMonitoringUnavailable(false);
+      } catch (err: any) {
         console.error("Erro ao carregar resumo SmartOLT:", err);
-        if (!cancelled) {
+
+        if (cancelled) return;
+
+        const status = err?.response?.status;
+
+        // 👉 se o backend responder 404/403, consideramos que essa empresa
+        // não tem monitoramento configurado
+        if (status === 404 || status === 403) {
+          setMonitoringUnavailable(true);
+          setMonitoringError(null);
+          setOfflineCount(0);
+          setLosCount(0);
+        } else {
           setMonitoringError("Não foi possível carregar o resumo do SmartOLT.");
           setOfflineCount(0);
           setLosCount(0);
@@ -77,12 +90,12 @@ export function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [empresaId]);
 
   // 👉 registra SW + subscription
   usePushNotifications();
 
-  // FLAGS (config do sistema)
+  // FLAGS
   const {
     showNotificationTestButton,
     showShortcutsSection,
@@ -100,11 +113,11 @@ export function DashboardPage() {
   // ANIVERSARIANTES
   const { birthdaysToday, birthdaysError } = useDashboardBirthdays();
 
-  // PERMISSÕES GLOBAIS (RBAC) – inclui notify_birthday
+  // PERMISSÕES GLOBAIS (RBAC)
   const { can: canGlobal } = useGlobalSettingsPermissions();
   const canSeeBirthdayNotification = canGlobal("notify_birthday");
 
-  // estado local da ação de teste de notificação
+  // botão testar notificação
   const [testNotifLoading, setTestNotifLoading] = useState(false);
   const [testNotifError, setTestNotifError] = useState<string | null>(null);
 
@@ -130,7 +143,7 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Modal de alerta de aniversariante */}
+      {/* Modal de alerta de aniversariantes */}
       {showBirthdayModal &&
         canSeeBirthdayNotification &&
         birthdaysToday.length > 0 && (
@@ -141,8 +154,7 @@ export function DashboardPage() {
         <div>
           <h2 className="text-2xl font-semibold text-slate-900">Visão geral</h2>
           <p className="text-sm text-slate-600 mt-1">
-            Resumo rápido da saúde da infraestrutura, informações do dia e notas
-            destacadas.
+            Resumo rápido do sistema, informações do dia e notas destacadas.
           </p>
         </div>
 
@@ -166,31 +178,50 @@ export function DashboardPage() {
 
       {/* Cards rápidos */}
       <div className="grid gap-4 md:grid-cols-3">
-        {/* Servidores online */}
+        {/* CARD 1 – Servidores online (mock) */}
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-xs font-medium text-slate-500 uppercase">
             Servidores online
           </p>
-          <p className="mt-2 text-3xl font-semibold text-emerald-600">
-            {totalOnline}/{mockServers.length}
-          </p>
+          <p className="mt-2 text-3xl font-semibold text-slate-400">—</p>
           <p className="mt-1 text-xs text-slate-500">
-            Monitorando servidores cadastrados na central.
+            Monitoramento de servidores ainda não está ativo
+            para a empresa selecionada.
           </p>
         </div>
 
-        {/* Monitoramento de equipamentos (SmartOLT) */}
+        {/* CARD 2 – SmartOLT */}
         <div className="flex flex-col gap-1">
-          <MonitoringEquipmentSummaryCard
-            offlineCount={offlineCount}
-            losCount={losCount}
-          />
-          {monitoringError && (
-            <p className="text-[11px] text-red-500 mt-1">{monitoringError}</p>
+          {monitoringUnavailable ? (
+            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm h-full flex flex-col justify-center">
+              <p className="text-xs font-medium text-slate-500 uppercase">
+                Monitoramento de equipamentos
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Não há monitoramento ativo de equipamentos
+                para a empresa selecionada.
+              </p>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Configure o SmartOLT para esta empresa para visualizar
+                os desligados e com LOS aqui.
+              </p>
+            </div>
+          ) : (
+            <>
+              <MonitoringEquipmentSummaryCard
+                offlineCount={offlineCount}
+                losCount={losCount}
+              />
+              {monitoringError && (
+                <p className="text-[11px] text-red-500 mt-1">
+                  {monitoringError}
+                </p>
+              )}
+            </>
           )}
         </div>
 
-        {/* Aniversariantes de hoje */}
+        {/* CARD 3 – Aniversariantes */}
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <p className="text-xs font-medium text-slate-500 uppercase">
             Aniversariantes de hoje
@@ -199,7 +230,7 @@ export function DashboardPage() {
             {birthdaysToday.length}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            Equipe sempre lembrada, clima organizacional agradece.
+            Celebrando a equipe com carinho.
           </p>
           {birthdaysError && (
             <p className="mt-1 text-xs text-red-500">{birthdaysError}</p>
@@ -207,12 +238,11 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Últimos servidores + Aniversariantes */}
+      {/* Outras seções — seguem iguais */}
       <section className="grid gap-4 md:grid-cols-2">
-        {/* aqui entram seus cards de servidores e lista de aniversariantes, igual antes */}
+        {/* Cards etc */}
       </section>
 
-      {/* Atalhos rápidos (dashboard) – controlado pela flag */}
       {showShortcutsSection && (
         <section className="space-y-3">
           <div className="flex items-center justify-between">
@@ -222,15 +252,11 @@ export function DashboardPage() {
           </div>
 
           {shortcutsLoading ? (
-            <p className="text-sm text-slate-500">
-              Carregando atalhos do dashboard...
-            </p>
+            <p className="text-sm text-slate-500">Carregando atalhos...</p>
           ) : shortcutsError ? (
             <p className="text-sm text-red-500">{shortcutsError}</p>
           ) : shortcuts.length === 0 ? (
-            <p className="text-sm text-slate-500">
-              Nenhum atalho marcado para aparecer no dashboard ainda.
-            </p>
+            <p className="text-sm text-slate-500">Nenhum atalho marcado.</p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {shortcuts.map((shortcut) => (
@@ -241,7 +267,6 @@ export function DashboardPage() {
         </section>
       )}
 
-      {/* Notas rápidas (dashboard) – controlado pela flag */}
       {showNotesSection && (
         <section className="space-y-3">
           <div className="flex items-center justify-between">
@@ -251,14 +276,12 @@ export function DashboardPage() {
           </div>
 
           {notesLoading ? (
-            <p className="text-sm text-slate-500">
-              Carregando notas destacadas...
-            </p>
+            <p className="text-sm text-slate-500">Carregando notas...</p>
           ) : notesError ? (
             <p className="text-sm text-red-500">{notesError}</p>
           ) : notes.length === 0 ? (
             <p className="text-sm text-slate-500">
-              Nenhuma nota marcada para aparecer no dashboard ainda.
+              Nenhuma nota marcada ainda.
             </p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">

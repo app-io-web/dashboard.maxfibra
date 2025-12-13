@@ -5,94 +5,90 @@ import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { NewFichaPopup } from "../notifications/NewFichaPopup";
 import { SmartOltAutomationPopup } from "../notifications/SmartOltAutomationPopup";
-import { api } from "../../lib/api";
-import type { EmpresaSettings } from "../empresa/EmpresaSettingsEditForm";
+import { useSession } from "../../contexts/SessionContext";
 
-// só o que a gente precisa pro branding
-type EmpresaBranding = Pick<EmpresaSettings, "display_name" | "logo_url">;
+const POST_LOGIN_REFRESH_KEY = "mx_post_login_refresh_v1";
 
 export function AppLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [empresa, setEmpresa] = useState<EmpresaBranding | null>(null);
+  const { empresaId } = useSession();
 
-  // helper pra montar URL absoluta da logo
-  function buildLogoUrl(raw?: string | null): string {
-    if (!raw) return "";
-    if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.innerWidth >= 768;
+  });
 
-    const base = api.defaults.baseURL || "";
-    return base.replace(/\/$/, "") + (raw.startsWith("/") ? raw : `/${raw}`);
-  }
+  const [isTabletPortrait, setIsTabletPortrait] = useState(false);
 
-  // trocar favicon dinamicamente
-  function updateFavicon(url: string) {
-    let link =
-      document.querySelector<HTMLLinkElement>("link[rel='icon']") ||
-      document.createElement("link");
-
-    link.rel = "icon";
-    link.href = url;
-    if (!link.parentNode) {
-      document.head.appendChild(link);
-    }
-  }
-
-  // busca empresa atual só pra branding (título + favicon)
+  // ✅ refresh rápido UMA vez depois do login (pra permissões/menu carregarem lisinho)
   useEffect(() => {
-    let isMounted = true;
+    const flag = sessionStorage.getItem(POST_LOGIN_REFRESH_KEY);
+    if (flag === "1") {
+      sessionStorage.removeItem(POST_LOGIN_REFRESH_KEY);
+      setTimeout(() => window.location.reload(), 80);
+    }
+  }, []);
 
-    async function fetchEmpresaBranding() {
-      try {
-        const res = await api.get<{ empresaSettings: EmpresaSettings | null }>(
-          "/empresa/settings"
-        );
-        if (!isMounted) return;
+  useEffect(() => {
+    function checkOrientation() {
+      if (typeof window === "undefined") return;
 
-        if (res.data.empresaSettings) {
-          const { display_name, logo_url } = res.data.empresaSettings;
-          setEmpresa({ display_name, logo_url });
-        } else {
-          setEmpresa(null);
-        }
-      } catch (err) {
-        console.error("[AppLayout] Erro ao carregar empresa para branding:", err);
-        if (isMounted) {
-          setEmpresa(null);
-        }
-      }
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      const isTablet = width >= 768 && width <= 1280;
+      const isPortrait = height > width;
+
+      setIsTabletPortrait(isTablet && isPortrait);
     }
 
-    fetchEmpresaBranding();
+    checkOrientation();
+    window.addEventListener("resize", checkOrientation);
+    window.addEventListener("orientationchange", checkOrientation);
 
     return () => {
-      isMounted = false;
+      window.removeEventListener("resize", checkOrientation);
+      window.removeEventListener("orientationchange", checkOrientation);
     };
   }, []);
 
-  // título da aba baseado na empresa atual
-  useEffect(() => {
-    if (empresa?.display_name) {
-      document.title = `${empresa.display_name} • Central Admin`;
-    } else {
-      document.title = "Central Admin";
-    }
-  }, [empresa?.display_name]);
-
-  // favicon baseado na logo da empresa (ou fallback)
-  useEffect(() => {
-    if (empresa?.logo_url) {
-      const url = buildLogoUrl(empresa.logo_url);
-      updateFavicon(url);
-    } else {
-      // fallback padrão
-      updateFavicon("/vite.svg");
-    }
-  }, [empresa?.logo_url]);
+  if (isTabletPortrait) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-100 p-6 text-center">
+        <div className="max-w-md space-y-3">
+          <h1 className="text-2xl font-semibold">
+            Gire o tablet para o modo horizontal
+          </h1>
+          <p className="text-sm text-slate-300">
+            Para usar a Central Administrativa no tablet, mantenha o aparelho na
+            orientação paisagem (horizontal).
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-slate-100">
-      {/* Sidebar some/aparece conforme o estado */}
-      {isSidebarOpen && <Sidebar />}
+    <div className="min-h-screen bg-slate-100 flex">
+      {isSidebarOpen && (
+        <button
+          type="button"
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          aria-label="Fechar menu lateral"
+        />
+      )}
+
+      <div
+        className={[
+          "fixed inset-y-0 left-0 z-40 transform transition-transform duration-200 overflow-hidden",
+          "md:static",
+          isSidebarOpen
+            ? "translate-x-0 w-72 md:w-64"
+            : "-translate-x-full w-72 md:w-0",
+        ].join(" ")}
+      >
+        <Sidebar />
+      </div>
 
       <div className="flex-1 flex flex-col">
         <Topbar
@@ -100,11 +96,13 @@ export function AppLayout() {
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         />
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6">
           <div className="max-w-6xl mx-auto">
             <NewFichaPopup />
             <SmartOltAutomationPopup />
-            <Outlet />
+
+            {/* ✅ isso aqui é o pulo do gato */}
+            <Outlet key={empresaId || "no-empresa"} />
           </div>
         </main>
       </div>

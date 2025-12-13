@@ -1,7 +1,7 @@
 // public/service-worker.js
 
 // Versão do SW (muda isso quando fizer mudança grande no cache)
-const SW_VERSION = "central-admin-v1";
+const SW_VERSION = "central-admin-v3"; // <<-- bump pra forçar tudo a atualizar
 const CACHE_NAME = `central-admin-cache-${SW_VERSION}`;
 
 console.log("[SW] Versão carregada:", SW_VERSION);
@@ -33,25 +33,46 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// ACTIVATE: limpa caches antigos
+// ACTIVATE: limpa caches antigos + assume controle + avisa o app
 self.addEventListener("activate", (event) => {
   console.log("[SW] Activate");
+
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    (async () => {
+      // 1) limpa caches antigos (mantém só o atual)
+      const keys = await caches.keys();
+      await Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
             console.log("[SW] Deletando cache antigo:", key);
             return caches.delete(key);
           }
         })
-      )
-    )
+      );
+
+      // 2) assume controle das abas abertas
+      await self.clients.claim();
+
+      // 3) avisa o app que o SW novo foi ativado
+      const clientList = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+      });
+
+      console.log("[SW] Avisando clients:", clientList.length);
+
+      for (const client of clientList) {
+        client.postMessage({
+          source: "sw",
+          type: "SW_ACTIVATED",
+          version: SW_VERSION,
+        });
+      }
+    })()
   );
-  self.clients.claim();
 });
 
-// FETCH: cache-first para assets, network para API
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
@@ -59,52 +80,96 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
+  const acceptHeader = request.headers.get("accept") || "";
 
-  // Não cacheia chamadas de API ou notificações
-  if (url.pathname.startsWith("/api") || url.pathname.startsWith("/notifications")) {
+  // 1) NÃO intercepta requisições de outro domínio
+  if (url.origin !== self.location.origin) {
     return;
   }
 
+  // 2) NÃO mexer em:
+  // - chamadas de API (/api)
+  // - notificações (/notifications)
+  // - rotas de auth (/auth, /login, /me)
+  // - qualquer coisa que peça JSON (Accept: application/json)
+  if (
+    url.pathname.startsWith("/api") ||
+    url.pathname.startsWith("/notifications") ||
+    url.pathname.startsWith("/auth") ||
+    url.pathname === "/login" ||
+    url.pathname === "/me" ||
+    acceptHeader.includes("application/json")
+  ) {
+    return;
+  }
+
+  // 3) Navegação SPA: SEMPRE responder com index.html
+  if (request.mode === "navigate" && acceptHeader.includes("text/html")) {
+    event.respondWith(
+      (async () => {
+        // tenta pegar do cache primeiro
+        const cachedIndex = await caches.match("/index.html");
+        if (cachedIndex) {
+          return cachedIndex;
+        }
+
+        // se não tiver no cache, busca da rede e salva
+        const response = await fetch("/index.html");
+        try {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put("/index.html", response.clone());
+        } catch (err) {
+          console.warn("[SW] Erro ao cachear index.html:", err);
+        }
+        return response;
+      })()
+    );
+    return;
+  }
+
+  // 4) Demais recursos estáticos: cache first com fallback pra rede
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    (async () => {
+      const cached = await caches.match(request);
+      if (cached) {
+        return cached;
       }
 
-      // senão, busca na rede e guarda no cache
-      return fetch(request)
-        .then((response) => {
-          // só cacheia resposta ok
-          if (!response || response.status !== 200 || response.type === "opaque") {
-            return response;
-          }
+      try {
+        const response = await fetch(request);
 
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseToCache);
-          });
-
+        if (!response || response.status !== 200 || response.type === "opaque") {
           return response;
-        })
-        .catch((err) => {
-          console.warn("[SW] Fetch falhou, talvez offline:", err);
+        }
 
-          // se for navegação, tentar voltar pro index.html (SPA)
-          if (request.mode === "navigate") {
-            return caches.match("/index.html");
-          }
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(request, response.clone());
 
-          // senão, tenta algo básico
-          return caches.match(request);
+        return response;
+      } catch (err) {
+        console.warn("[SW] Fetch falhou, talvez offline:", err);
+
+        // tenta de novo o cache desse request
+        const fallbackCache = await caches.match(request);
+        if (fallbackCache) return fallbackCache;
+
+        // se for navegação e não tiver nada, tenta index.html
+        if (request.mode === "navigate") {
+          const fallbackIndex = await caches.match("/index.html");
+          if (fallbackIndex) return fallbackIndex;
+        }
+
+        return new Response("Offline ou servidor indisponível.", {
+          status: 503,
+          headers: { "Content-Type": "text/plain; charset=utf-8" },
         });
-    })
+      }
+    })()
   );
 });
 
-
 // =======================
 // PUSH NOTIFICATIONS
-// (sua lógica original + ajustes de ícone)
 // =======================
 
 self.addEventListener("push", (event) => {
@@ -123,7 +188,6 @@ self.addEventListener("push", (event) => {
 
   const options = {
     body,
-    // ícones alinhados com o que colocamos na pasta /icons
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
     data: {
@@ -132,13 +196,11 @@ self.addEventListener("push", (event) => {
     },
   };
 
-  // 1) mostra a notificação normal
   const showNotificationPromise = self.registration.showNotification(
     title,
     options
   );
 
-  // 2) avisa as abas abertas
   const broadcastPromise = self.clients
     .matchAll({ type: "window", includeUncontrolled: true })
     .then((clientList) => {
@@ -149,7 +211,7 @@ self.addEventListener("push", (event) => {
           title,
           body,
           url,
-          data: data.data || {}, // { type: "cadastro_ficha", protocolo, ... }
+          data: data.data || {},
         });
       }
     });
@@ -182,3 +244,38 @@ self.addEventListener("notificationclick", (event) => {
       })
   );
 });
+
+
+// Recebe comandos do app (ex: forçar ativação / limpar cache)
+self.addEventListener("message", (event) => {
+  const msg = event.data || {};
+
+  if (msg?.type === "SKIP_WAITING") {
+    console.log("[SW] SKIP_WAITING recebido");
+    self.skipWaiting();
+    return;
+  }
+
+  if (msg?.type === "CLEAR_CACHES") {
+    console.log("[SW] CLEAR_CACHES recebido");
+
+    event.waitUntil(
+      (async () => {
+        const keys = await caches.keys();
+
+        // 🔥 RECOMENDADO: apagar só caches da tua app (não tudo do domínio)
+        await Promise.all(
+          keys.map((k) => {
+            if (k.startsWith("central-admin-cache-")) {
+              console.log("[SW] Limpando cache:", k);
+              return caches.delete(k);
+            }
+          })
+        );
+      })()
+    );
+
+    return;
+  }
+});
+

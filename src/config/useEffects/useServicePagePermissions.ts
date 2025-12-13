@@ -1,20 +1,28 @@
 // src/config/useEffects/useServicePagePermissions.ts
 import { useMemo } from "react";
-import { resolveServicePagePermissions } from "../servicePagePermissions";
-import type { ServicePageResolvedPermissions } from "../servicePagePermissions";
-import { getCurrentUser } from "../../lib/auth";
+import { useSession } from "../../contexts/SessionContext";
+import {
+  resolveServicePagePermissions,
+  type ServicePageResolvedPermissions,
+} from "../servicePagePermissions";
 
-export function useServicePagePermissions(): ServicePageResolvedPermissions {
-  const user = getCurrentUser() as
-    | (ReturnType<typeof getCurrentUser> & { permissions?: string[] })
-    | null;
+export function useServicePagePermissions(): ServicePageResolvedPermissions & {
+  permissionsLoading: boolean;
+} {
+  const { permissions, permissionsLoading } = useSession();
 
-  const permissionKeys = user?.permissions ?? [];
+  const permissionKeys = useMemo(
+    () => (Array.isArray(permissions) ? permissions : []),
+    [permissions]
+  );
 
   const resolved = useMemo(
     () => resolveServicePagePermissions(permissionKeys),
     [permissionKeys]
   );
 
-  return resolved;
+  return {
+    ...resolved,
+    permissionsLoading, // opcional, mas ajuda na UI
+  };
 }

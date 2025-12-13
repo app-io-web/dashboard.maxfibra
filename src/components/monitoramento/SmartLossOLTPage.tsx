@@ -84,6 +84,7 @@ export function SmartLossOLTPage() {
 
   const [selectedGpon, setSelectedGpon] = useState<string>("all");
 
+  // "longer" = mais tempo em LOS | "recent" = menos tempo em LOS
   const [sortMode, setSortMode] = useState<"recent" | "longer">("longer");
 
   const [page, setPage] = useState(1);
@@ -243,6 +244,7 @@ export function SmartLossOLTPage() {
       const ageB = getLosAgeInMinutes(b.los_info);
 
       if (sortMode === "recent") {
+        // menos tempo em LOS
         if (ageA === ageB) {
           return (
             new Date(b.created_at).getTime() -
@@ -251,6 +253,7 @@ export function SmartLossOLTPage() {
         }
         return ageA - ageB;
       } else {
+        // mais tempo em LOS
         if (ageA === ageB) {
           return (
             new Date(a.created_at).getTime() -
@@ -291,18 +294,17 @@ export function SmartLossOLTPage() {
 
   return (
     <div className="space-y-4">
-      {/* HEADER */}
-      <div className="flex items-start justify-between gap-4">
+      {/* HEADER (igual ao SmartShortOLTPage no estilo) */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        {/* LADO ESQUERDO: título + chip + ordenação */}
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
             <h2 className="text-lg font-semibold text-slate-900">
               ONUs em LOS
             </h2>
 
-            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600 border border-red-100">
-              {totalOnus === 1
-                ? "1 ONU em LOS"
-                : `${totalOnus} ONUs em LOS`}
+            <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-medium text-red-600 border border-red-100 sm:text-xs">
+              {totalOnus === 1 ? "1 ONU em LOS" : `${totalOnus} ONUs em LOS`}
             </span>
           </div>
 
@@ -311,30 +313,34 @@ export function SmartLossOLTPage() {
           </p>
 
           {totalOnus > 1 && canViewOrdering && (
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-slate-500">Ordenar por</span>
-              <div className="inline-flex rounded-full bg-slate-100 p-0.5">
+            <div className="mt-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+              <span className="text-[11px] text-slate-500 sm:text-xs">
+                Ordenar por
+              </span>
+
+              <div className="inline-flex w-full rounded-full border border-slate-200 bg-white p-0.5 shadow-sm sm:w-auto sm:bg-slate-100">
                 <button
                   type="button"
                   onClick={() => canEditOrdering && setSortMode("longer")}
                   className={[
-                    "px-2.5 py-1 text-xs rounded-full transition-colors",
+                    "flex-1 rounded-full px-3 py-1 text-[11px] transition-colors sm:flex-none sm:px-3 sm:text-xs",
                     sortMode === "longer"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700",
+                      ? "bg-slate-900 text-white shadow-sm"
+                      : "text-slate-600 hover:text-slate-800",
                     !canEditOrdering ? "opacity-50 cursor-not-allowed" : "",
                   ].join(" ")}
                 >
                   Mais tempo em LOS
                 </button>
+
                 <button
                   type="button"
                   onClick={() => canEditOrdering && setSortMode("recent")}
                   className={[
-                    "px-2.5 py-1 text-xs rounded-full transition-colors",
+                    "flex-1 rounded-full px-3 py-1 text-[11px] transition-colors sm:flex-none sm:px-3 sm:text-xs",
                     sortMode === "recent"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700",
+                      ? "bg-slate-900 text-white shadow-sm"
+                      : "text-slate-600 hover:text-slate-800",
                     !canEditOrdering ? "opacity-50 cursor-not-allowed" : "",
                   ].join(" ")}
                 >
@@ -349,12 +355,14 @@ export function SmartLossOLTPage() {
           )}
         </div>
 
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex flex-col items-end gap-1">
-            <span className="text-xs text-slate-500">
+        {/* LADO DIREITO: frequência + executar agora (estilo igual ao SHORT) */}
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+          <div className="flex flex-col items-start gap-1 sm:items-end">
+            <span className="text-[11px] text-slate-500 sm:text-xs">
               Frequência da automação
             </span>
-            <div className="flex flex-wrap gap-1 justify-end">
+
+            <div className="flex flex-wrap gap-1 justify-start sm:justify-end">
               {INTERVAL_OPTIONS.filter((opt) =>
                 canSeeIntervalOption(opt.value)
               ).map((opt) => {
@@ -365,12 +373,10 @@ export function SmartLossOLTPage() {
                 return (
                   <button
                     key={opt.value}
-                    onClick={() =>
-                      !disabled && handleChangeInterval(opt.value)
-                    }
+                    onClick={() => !disabled && handleChangeInterval(opt.value)}
                     disabled={disabled}
                     className={[
-                      "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                      "rounded-full text-[11px] font-medium transition-colors px-2.5 py-1 sm:text-xs sm:px-3 sm:py-1.5",
                       isActive
                         ? "bg-brand-500 text-white shadow-sm border border-brand-400"
                         : "border border-slate-300 text-slate-600 hover:border-brand-400 hover:text-brand-500",
@@ -382,8 +388,9 @@ export function SmartLossOLTPage() {
                 );
               })}
             </div>
+
             {!canEditSmartOltLos && (
-              <span className="text-[10px] text-slate-400 mt-0.5">
+              <span className="mt-0.5 text-[10px] text-slate-400">
                 Você não tem permissão para alterar a frequência.
               </span>
             )}
@@ -394,14 +401,14 @@ export function SmartLossOLTPage() {
               type="button"
               onClick={handleRunNow}
               disabled={runningNow}
-              className="inline-flex items-center rounded-md bg-brand-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="self-start sm:self-end inline-flex items-center rounded-md bg-brand-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {runningNow ? "Executando…" : "Executar agora"}
             </button>
           )}
 
           {lastRun && (
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-500 sm:text-right">
               Última execução:{" "}
               {new Date(lastRun).toLocaleString("pt-BR", {
                 dateStyle: "short",
@@ -444,8 +451,8 @@ export function SmartLossOLTPage() {
         </div>
       ) : (
         <>
-          {/* GRID DE CARDS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {/* GRID DE CARDS – colunas iguais ao SHORT para ficar consistente */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {pageItems.map((item) => (
               <div
                 key={item.id}
@@ -484,7 +491,7 @@ export function SmartLossOLTPage() {
             ))}
           </div>
 
-          {/* PAGINAÇÃO */}
+          {/* PAGINAÇÃO (mantida, só usando state existente) */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-3 text-xs text-slate-600">
               <span>
