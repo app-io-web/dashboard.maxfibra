@@ -1,7 +1,7 @@
 // public/service-worker.js
 
 // Versão do SW (muda isso quando fizer mudança grande no cache)
-const SW_VERSION = "central-admin-v3"; // <<-- bump pra forçar tudo a atualizar
+const SW_VERSION = "central-admin-v4"; // <<-- bump pra forçar tudo a atualizar
 const CACHE_NAME = `central-admin-cache-${SW_VERSION}`;
 
 console.log("[SW] Versão carregada:", SW_VERSION);
@@ -33,23 +33,45 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// ACTIVATE: limpa caches antigos
+// ACTIVATE: limpa caches antigos + assume controle + avisa o app
 self.addEventListener("activate", (event) => {
   console.log("[SW] Activate");
+
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    (async () => {
+      // 1) limpa caches antigos (mantém só o atual)
+      const keys = await caches.keys();
+      await Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
             console.log("[SW] Deletando cache antigo:", key);
             return caches.delete(key);
           }
         })
-      )
-    )
+      );
+
+      // 2) assume controle das abas abertas
+      await self.clients.claim();
+
+      // 3) avisa o app que o SW novo foi ativado
+      const clientList = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+      });
+
+      console.log("[SW] Avisando clients:", clientList.length);
+
+      for (const client of clientList) {
+        client.postMessage({
+          source: "sw",
+          type: "SW_ACTIVATED",
+          version: SW_VERSION,
+        });
+      }
+    })()
   );
-  self.clients.claim();
 });
+
 
 self.addEventListener("fetch", (event) => {
   const request = event.request;
@@ -222,3 +244,38 @@ self.addEventListener("notificationclick", (event) => {
       })
   );
 });
+
+
+// Recebe comandos do app (ex: forçar ativação / limpar cache)
+self.addEventListener("message", (event) => {
+  const msg = event.data || {};
+
+  if (msg?.type === "SKIP_WAITING") {
+    console.log("[SW] SKIP_WAITING recebido");
+    self.skipWaiting();
+    return;
+  }
+
+  if (msg?.type === "CLEAR_CACHES") {
+    console.log("[SW] CLEAR_CACHES recebido");
+
+    event.waitUntil(
+      (async () => {
+        const keys = await caches.keys();
+
+        // 🔥 RECOMENDADO: apagar só caches da tua app (não tudo do domínio)
+        await Promise.all(
+          keys.map((k) => {
+            if (k.startsWith("central-admin-cache-")) {
+              console.log("[SW] Limpando cache:", k);
+              return caches.delete(k);
+            }
+          })
+        );
+      })()
+    );
+
+    return;
+  }
+});
+
