@@ -17,12 +17,12 @@ export function BirthdayItemRow({ item, variant, canDeleteManual, onDeleteManual
 
   if (variant === "today") {
     return (
-      <li className="flex items-center justify-between gap-3 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3 py-2.5 shadow-[0_1px_0_rgba(16,185,129,0.15)]">
+      <li className="flex items-center justify-between gap-3 rounded-xl border border-blue-100 bg-blue-50/80 px-3 py-2.5 shadow-[0_1px_0_rgba(16,185,129,0.15)]">
         <div className="flex items-center gap-3">
           <BirthdayAvatar name={item.name} avatarUrl={item.avatarUrl} variant="today" />
           <div>
-            <p className="text-sm font-semibold text-emerald-950">{item.name}</p>
-            <p className="text-xs text-emerald-900/80">
+            <p className="text-sm font-semibold text-blue-950">{item.name}</p>
+            <p className="text-xs text-blue-900/80">
               {item.role}
               {item.sector ? ` • ${item.sector}` : null}
               {` • Faz ${item.info.ageAtNext} anos`}
@@ -32,11 +32,11 @@ export function BirthdayItemRow({ item, variant, canDeleteManual, onDeleteManual
 
         <div className="flex items-center gap-2">
           <div className="flex flex-col items-end gap-1">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800 border border-emerald-100">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2.5 py-0.5 text-[11px] font-semibold text-blue-800 border border-blue-100">
               <Cake size={12} strokeWidth={2} />
               Hoje
             </span>
-            <span className="text-[11px] font-medium text-emerald-900/80">{formatDate(item.date)}</span>
+            <span className="text-[11px] font-medium text-blue-900/80">{formatDate(item.date)}</span>
           </div>
 
           {showDelete && (

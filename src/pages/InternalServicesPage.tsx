@@ -217,7 +217,7 @@ export function InternalServicesPage() {
       <div className="mt-6 rounded-2xl bg-white/90 p-6 shadow-md border border-slate-200">
         <p className="text-slate-600 text-sm">
           Conteúdo da sub-aba:
-          <span className="font-semibold text-emerald-600">
+          <span className="font-semibold text-blue-500">
             {" "}
             {effectiveActiveSub}
           </span>
@@ -230,7 +230,7 @@ export function InternalServicesPage() {
     <div className="space-y-8">
       {/* HEADER */}
       <header className="flex items-center gap-3">
-        <div className="h-11 w-11 flex items-center justify-center rounded-xl bg-emerald-500 text-white shadow">
+        <div className="h-11 w-11 flex items-center justify-center rounded-xl bg-blue-500 text-white shadow">
           <Server className="w-6 h-6" />
         </div>
         <div>
@@ -265,8 +265,8 @@ export function InternalServicesPage() {
                 className={[
                   "px-4 py-2 rounded-t-lg text-sm font-medium flex items-center gap-2 transition",
                   isActive
-                    ? "bg-white text-emerald-600 border border-slate-200 border-b-transparent shadow-sm"
-                    : "text-slate-500 hover:text-emerald-600",
+                    ? "bg-white text-blue-500 border border-slate-200 border-b-transparent shadow-sm"
+                    : "text-slate-500 hover:text-blue-500",
                 ].join(" ")}
               >
                 <Icon className="w-4 h-4" />
@@ -296,7 +296,7 @@ export function InternalServicesPage() {
                 className={[
                   "px-3 py-1.5 rounded-full text-xs font-medium transition",
                   isActive
-                    ? "bg-emerald-500 text-white shadow"
+                    ? "bg-blue-500 text-white shadow"
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200",
                 ].join(" ")}
               >

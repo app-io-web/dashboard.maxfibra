@@ -90,7 +90,7 @@ export function PasswordFormModal({
             </label>
             <input
               type="text"
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
               value={values.nome}
               onChange={(e) => handleChange("nome", e.target.value)}
               placeholder="Ex: VPS Principal, NGINX Proxy Manager..."
@@ -103,7 +103,7 @@ export function PasswordFormModal({
             </label>
             <input
               type="text"
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
               value={values.email}
               onChange={(e) => handleChange("email", e.target.value)}
               placeholder="login@empresa.com"
@@ -116,7 +116,7 @@ export function PasswordFormModal({
             </label>
             <input
               type="text"
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
               value={values.url}
               onChange={(e) => handleChange("url", e.target.value)}
               placeholder="https://painel.seu-sistema.com"
@@ -131,7 +131,7 @@ export function PasswordFormModal({
             </label>
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
               value={values.senha}
               onChange={(e) => handleChange("senha", e.target.value)}
               placeholder={
@@ -153,7 +153,7 @@ export function PasswordFormModal({
               Anotação (opcional)
             </label>
             <textarea
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
               rows={2}
               value={values.anotacao}
               onChange={(e) => handleChange("anotacao", e.target.value)}
@@ -181,7 +181,7 @@ export function PasswordFormModal({
               <button
                 type="submit"
                 disabled={loading || (mode === "create" && !values.senha)}
-                className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? "Salvando..." : primaryLabel}
               </button>

@@ -48,7 +48,7 @@ export function SupportNewTicketForm({
     <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]" />
+          <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]" />
           Abrir novo chamado
         </h2>
       </div>

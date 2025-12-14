@@ -71,16 +71,16 @@ export function BirthdayAlertModal({ birthdaysToday }: BirthdayAlertModalProps) 
 
   return (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div className="bg-white text-slate-800 rounded-2xl shadow-2xl max-w-lg w-[90%] p-6 border border-emerald-500/20">
+    <div className="bg-white text-slate-800 rounded-2xl shadow-2xl max-w-lg w-[90%] p-6 border border-blue-500/20">
       <div className="flex items-start gap-3">
-        <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+        <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-500">
           <AlertTriangle className="h-6 w-6" />
         </div>
 
         <div className="flex-1">
           <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-900">
             Atenção!
-            <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-200">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-500 border border-blue-200">
               Aniversariante{birthdaysToday.length > 1 ? "s" : ""} do dia
             </span>
           </h2>
@@ -91,7 +91,7 @@ export function BirthdayAlertModal({ birthdaysToday }: BirthdayAlertModalProps) 
               {birthdaysToday.length} colaborador
               {birthdaysToday.length > 1 ? "es" : ""} de aniversário.
             </span>
-            <PartyPopper className="h-4 w-4 text-emerald-600" />
+            <PartyPopper className="h-4 w-4 text-blue-500" />
           </p>
 
           <div className="mt-4 space-y-2">
@@ -124,7 +124,7 @@ export function BirthdayAlertModal({ birthdaysToday }: BirthdayAlertModalProps) 
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-xs text-emerald-600">
+                <div className="flex items-center gap-1 text-xs text-blue-500">
                   <Gift className="h-4 w-4" />
                   hoje
                 </div>

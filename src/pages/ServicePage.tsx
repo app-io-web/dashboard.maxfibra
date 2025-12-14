@@ -112,7 +112,7 @@ export function ServicePage() {
       <div className="space-y-6">
         <header className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <LayoutDashboard className="w-5 h-5 text-emerald-500" />
+            <LayoutDashboard className="w-5 h-5 text-blue-500" />
             <h2 className="text-2xl font-semibold text-slate-900">
               Service Page
             </h2>
@@ -131,7 +131,7 @@ export function ServicePage() {
       <header className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <LayoutDashboard className="w-5 h-5 text-emerald-500" />
+            <LayoutDashboard className="w-5 h-5 text-blue-500" />
             <h2 className="text-2xl font-semibold text-slate-900">
               Service Page
             </h2>
@@ -217,7 +217,7 @@ export function ServicePage() {
             onClick={() => setActiveTab("dashboard_ixc")}
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${
               activeTab === "dashboard_ixc"
-                ? "bg-white text-emerald-700 shadow-sm"
+                ? "bg-white text-blue-700 shadow-sm"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >

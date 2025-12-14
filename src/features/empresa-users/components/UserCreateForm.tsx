@@ -181,7 +181,7 @@ export function UserCreateForm(props: Props) {
         </label>
 
         <select
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           value={empresaId}
           onChange={(e) => {
             userPickedEmpresaRef.current = true; // 🔥 agora é “minha escolha, respeita”
@@ -213,7 +213,7 @@ export function UserCreateForm(props: Props) {
           </label>
           <input
             type="text"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Ex: Maria Silva"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -227,7 +227,7 @@ export function UserCreateForm(props: Props) {
           </label>
           <input
             type="text"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="000.000.000-00"
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
@@ -245,7 +245,7 @@ export function UserCreateForm(props: Props) {
             Papel na empresa (role)
           </label>
           <select
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={role}
             onChange={(e) => setRole(e.target.value)}
           >
@@ -263,7 +263,7 @@ export function UserCreateForm(props: Props) {
           </label>
           <input
             type="text"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Ex: Financeiro, Atendente, CEO..."
             value={profession}
             onChange={(e) => setProfession(e.target.value)}
@@ -274,7 +274,7 @@ export function UserCreateForm(props: Props) {
                 type="button"
                 key={p}
                 onClick={() => setProfession(p)}
-                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 hover:border-emerald-500 hover:bg-emerald-50 transition"
+                className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] text-slate-700 hover:border-blue-500 hover:bg-blue-50 transition"
               >
                 {p}
               </button>
@@ -298,7 +298,7 @@ export function UserCreateForm(props: Props) {
           </label>
           <input
             type="date"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={dataNascimento}
             onChange={(e) => setDataNascimento(e.target.value)}
             required
@@ -310,7 +310,7 @@ export function UserCreateForm(props: Props) {
             <input
               id="central-admin"
               type="checkbox"
-              className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+              className="h-4 w-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
               checked={isCentralAdmin}
               onChange={(e) => setIsCentralAdmin(e.target.checked)}
             />
@@ -328,10 +328,10 @@ export function UserCreateForm(props: Props) {
       )}
 
       {successMessage && (
-        <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
           {successMessage}
           {createdUser && (
-            <div className="mt-1 text-[11px] text-emerald-700">
+            <div className="mt-1 text-[11px] text-blue-700">
               Usuário: {createdUser.name}
               {createdUser.email
                 ? ` (${createdUser.email})`
@@ -345,7 +345,7 @@ export function UserCreateForm(props: Props) {
         <button
           type="submit"
           disabled={submitting || !empresaId || empresaOptions.length === 0}
-          className="inline-flex items-center justify-center rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-blue-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {submitting ? "Criando usuário..." : "Criar usuário"}
         </button>

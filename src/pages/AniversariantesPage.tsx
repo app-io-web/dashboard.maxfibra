@@ -54,9 +54,9 @@ export function AniversariantesPage() {
             onClick={() => setIsCreateOpen(true)}
             className="
               inline-flex items-center gap-2 rounded-xl
-              border border-emerald-200 bg-emerald-50
-              px-3 py-1.5 text-xs font-medium text-emerald-900
-              shadow-sm hover:bg-emerald-100 hover:border-emerald-300
+              border border-blue-200 bg-blue-50
+              px-3 py-1.5 text-xs font-medium text-blue-900
+              shadow-sm hover:bg-blue-100 hover:border-blue-300
               transition
             "
           >

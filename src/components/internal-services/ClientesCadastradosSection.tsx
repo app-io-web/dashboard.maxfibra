@@ -88,7 +88,7 @@ export function ClientesCadastradosSection() {
       {/* Headerzinho da seção */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 border border-emerald-200">
+          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 border border-blue-200">
             <FileText className="w-5 h-5" />
           </div>
           <div>
@@ -105,7 +105,7 @@ export function ClientesCadastradosSection() {
           type="button"
           onClick={() => fetchFichas(true)}
           disabled={loading || reloading}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-emerald-300 hover:text-emerald-600 disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-500 disabled:opacity-50"
         >
           <RefreshCcw className={`w-3 h-3 ${reloading ? "animate-spin" : ""}`} />
           Recarregar
@@ -118,7 +118,7 @@ export function ClientesCadastradosSection() {
           <label className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
             Buscar ficha
           </label>
-          <div className="mt-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100">
+          <div className="mt-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
             <Search className="w-4 h-4 text-slate-400" />
             <input
               type="text"
@@ -169,14 +169,14 @@ export function ClientesCadastradosSection() {
                 {filtered.map((ficha) => (
                   <tr
                     key={ficha.id}
-                    className="hover:bg-emerald-50/40 transition-colors"
+                    className="hover:bg-blue-50/40 transition-colors"
                   >
                     {/* PROTOCOLO */}
                     <td className="px-4 py-2 align-top">
                       <button
                         type="button"
                         onClick={() => openFichaDetail(ficha.id)}
-                        className="font-medium text-emerald-700 hover:text-emerald-800 hover:underline"
+                        className="font-medium text-blue-700 hover:text-blue-800 hover:underline"
                       >
                         {ficha.protocolo}
                       </button>
@@ -190,7 +190,7 @@ export function ClientesCadastradosSection() {
                       <button
                         type="button"
                         onClick={() => openFichaDetail(ficha.id)}
-                        className="text-xs font-medium text-slate-800 hover:text-emerald-700 hover:underline text-left"
+                        className="text-xs font-medium text-slate-800 hover:text-blue-700 hover:underline text-left"
                       >
                         {ficha.nome}
                       </button>
@@ -201,7 +201,7 @@ export function ClientesCadastradosSection() {
 
                     {/* PLANO */}
                     <td className="px-4 py-2 align-top">
-                      <div className="text-xs font-medium text-emerald-700">
+                      <div className="text-xs font-medium text-blue-700">
                         {ficha.plano || "-"}
                       </div>
                       {ficha.streaming && (

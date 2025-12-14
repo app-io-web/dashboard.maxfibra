@@ -28,13 +28,13 @@ export function PlanosSuccessToast({
 
   return (
     <div className="pointer-events-none fixed top-4 right-4 z-50 flex flex-col gap-2">
-      <div className="pointer-events-auto flex w-72 items-start gap-3 rounded-2xl border border-emerald-100 bg-white/95 p-3 shadow-lg shadow-emerald-500/10">
-        <div className="mt-0.5 rounded-full bg-emerald-50 p-1.5">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+      <div className="pointer-events-auto flex w-72 items-start gap-3 rounded-2xl border border-blue-100 bg-white/95 p-3 shadow-lg shadow-blue-500/10">
+        <div className="mt-0.5 rounded-full bg-blue-50 p-1.5">
+          <CheckCircle2 className="h-4 w-4 text-blue-500" />
         </div>
 
         <div className="flex-1">
-          <p className="text-xs font-semibold text-emerald-700">
+          <p className="text-xs font-semibold text-blue-700">
             Site atualizado com sucesso
           </p>
           <p className="mt-0.5 text-[11px] text-slate-600">

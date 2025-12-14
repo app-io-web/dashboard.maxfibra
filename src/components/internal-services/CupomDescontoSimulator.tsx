@@ -88,7 +88,7 @@ export function CupomDescontoSimulator({ onImport }: CupomDescontoSimulatorProps
       <button
         type="button"
         onClick={handleOpen}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
       >
         <Calculator className="w-4 h-4" />
         Simular desconto
@@ -101,7 +101,7 @@ export function CupomDescontoSimulator({ onImport }: CupomDescontoSimulatorProps
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                  <Calculator className="w-4 h-4 text-emerald-600" />
+                  <Calculator className="w-4 h-4 text-blue-500" />
                   Simulador de desconto por plano
                 </h3>
                 <p className="text-[11px] text-slate-500">
@@ -202,14 +202,14 @@ export function CupomDescontoSimulator({ onImport }: CupomDescontoSimulatorProps
                             key={linha.key}
                             className={
                               isSelected
-                                ? "bg-emerald-50/80"
+                                ? "bg-blue-50/80"
                                 : "hover:bg-slate-50/60"
                             }
                           >
                             <td className="px-3 py-2 font-medium text-slate-800">
                               {linha.label}
                               {isSelected && (
-                                <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                <span className="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
                                   selecionado
                                 </span>
                               )}
@@ -247,7 +247,7 @@ export function CupomDescontoSimulator({ onImport }: CupomDescontoSimulatorProps
                   </button>
                   <button
                     type="submit"
-                    className="rounded-lg bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                    className="rounded-lg bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
                   >
                     Importar configuração
                   </button>

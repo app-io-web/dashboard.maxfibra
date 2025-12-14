@@ -223,7 +223,7 @@ export function EmpresaUsers({
                           {u.display_name || "Usuário sem nome"}
                         </p>
                         {u.is_central_admin && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                             CENTRAL ADMIN
                           </span>
                         )}
@@ -247,7 +247,7 @@ export function EmpresaUsers({
                             canVincularOutros && setLinkUser(u)
                           }
                           disabled={!canVincularOutros}
-                          className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium border border-emerald-500/40 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium border border-blue-500/40 text-blue-700 bg-blue-50 hover:bg-blue-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Vincular em outras empresas
                         </button>
@@ -382,7 +382,7 @@ export function EmpresaUsers({
               )}
 
               {formSuccess && (
-                <div className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+                <div className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
                   {formSuccess}
                 </div>
               )}

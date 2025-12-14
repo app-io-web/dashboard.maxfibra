@@ -106,7 +106,7 @@ export function BirthdayManualModal({
         {/* Cabeçalho */}
         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-700">
               <Cake size={16} />
             </div>
             <div>
@@ -138,7 +138,7 @@ export function BirthdayManualModal({
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               placeholder="Ex: Maria do Aniversário"
             />
           </div>
@@ -151,7 +151,7 @@ export function BirthdayManualModal({
               type="date"
               value={dataNascimento}
               onChange={(e) => setDataNascimento(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
@@ -164,7 +164,7 @@ export function BirthdayManualModal({
                 type="text"
                 value={profession}
                 onChange={(e) => setProfession(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 placeholder="Ex: Visitante, Fornecedor..."
               />
             </div>
@@ -177,7 +177,7 @@ export function BirthdayManualModal({
                 type="text"
                 value={empresaRole}
                 onChange={(e) => setEmpresaRole(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 placeholder="Ex: CONVIDADO, ESTAGIÁRIO..."
               />
             </div>
@@ -191,7 +191,7 @@ export function BirthdayManualModal({
               type="url"
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-0 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               placeholder="https://exemplo.com/imagem.jpg"
             />
           </div>
@@ -215,7 +215,7 @@ export function BirthdayManualModal({
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500 bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-blue-500 bg-blue-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {saving ? (
                 <span>Salvando...</span>

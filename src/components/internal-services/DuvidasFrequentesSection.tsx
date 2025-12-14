@@ -179,9 +179,9 @@ export function DuvidasFrequentesSection() {
           cards.push(
             <div
               key={`${idxGrupo}-${perguntaIndex}`}
-              className="rounded-xl border border-emerald-100 bg-white px-3 py-3"
+              className="rounded-xl border border-blue-100 bg-white px-3 py-3"
             >
-              <p className="text-[11px] font-semibold text-emerald-700 mb-2">
+              <p className="text-[11px] font-semibold text-blue-700 mb-2">
                 {numero}
               </p>
 
@@ -246,8 +246,8 @@ export function DuvidasFrequentesSection() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-            <HelpCircle className="h-5 w-5 text-emerald-600" />
+          <div className="h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+            <HelpCircle className="h-5 w-5 text-blue-500" />
           </div>
           <div>
             <h2 className="text-base font-semibold text-slate-900">
@@ -275,7 +275,7 @@ export function DuvidasFrequentesSection() {
             onClick={() =>
               navigate("/internal-services/duvidas-frequentes/new")
             }
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700"
           >
             <Plus className="h-3.5 w-3.5" />
             Nova dúvida
@@ -290,7 +290,7 @@ export function DuvidasFrequentesSection() {
           placeholder="Buscar por título da dúvida..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
         <span className="text-xs text-slate-400">
           {filteredItems.length} registro(s)
@@ -327,8 +327,8 @@ export function DuvidasFrequentesSection() {
                       className="flex-1 flex items-center justify-between gap-3 text-left"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10">
-                          <HelpCircle className="h-3.5 w-3.5 text-emerald-600" />
+                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/10">
+                          <HelpCircle className="h-3.5 w-3.5 text-blue-500" />
                         </span>
                         <div>
                           <p className="text-sm font-medium text-slate-900">

@@ -124,7 +124,7 @@ export function ContatoSection() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Share2 className="w-6 h-6 text-emerald-500" />
+          <Share2 className="w-6 h-6 text-blue-500" />
           <div>
             <h1 className="text-lg font-semibold text-slate-900">
               Contato do Site
@@ -151,7 +151,7 @@ export function ContatoSection() {
             type="submit"
             form="contato-form"
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-60"
           >
             <Save className="w-4 h-4" />
             {saving ? "Salvando..." : "Salvar alterações"}
@@ -168,7 +168,7 @@ export function ContatoSection() {
       )}
 
       {success && (
-        <div className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-700">
           <CheckCircle2 className="w-4 h-4 mt-0.5" />
           <span>{success}</span>
         </div>
@@ -183,7 +183,7 @@ export function ContatoSection() {
         {/* Links de Download */}
         <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Smartphone className="w-5 h-5 text-emerald-500" />
+            <Smartphone className="w-5 h-5 text-blue-500" />
             <div>
               <h2 className="text-sm font-semibold text-slate-900">
                 Links de Download
@@ -208,7 +208,7 @@ export function ContatoSection() {
                   android: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -226,7 +226,7 @@ export function ContatoSection() {
                   ios: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -239,7 +239,7 @@ export function ContatoSection() {
         {/* Telefone */}
         <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Phone className="w-5 h-5 text-emerald-500" />
+            <Phone className="w-5 h-5 text-blue-500" />
             <div>
               <h2 className="text-sm font-semibold text-slate-900">
                 Telefone
@@ -264,7 +264,7 @@ export function ContatoSection() {
                   numero: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -276,7 +276,7 @@ export function ContatoSection() {
         {/* Redes Sociais */}
         <div className="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Share2 className="w-5 h-5 text-emerald-500" />
+            <Share2 className="w-5 h-5 text-blue-500" />
             <div>
               <h2 className="text-sm font-semibold text-slate-900">
                 Redes Sociais
@@ -301,7 +301,7 @@ export function ContatoSection() {
                   instagram: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -319,7 +319,7 @@ export function ContatoSection() {
                   facebook: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -337,7 +337,7 @@ export function ContatoSection() {
                   youtube: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 

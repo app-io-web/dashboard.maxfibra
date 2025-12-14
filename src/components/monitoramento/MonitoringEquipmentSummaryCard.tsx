@@ -50,7 +50,7 @@ export function MonitoringEquipmentSummaryCard({
           </p>
           <p className="mt-1 text-xs text-slate-500">{description}</p>
         </div>
-        <Activity className="h-5 w-5 text-emerald-500" />
+        <Activity className="h-5 w-5 text-blue-500" />
       </div>
 
       <div className={`mt-4 grid ${gridColsClass} gap-2`}>

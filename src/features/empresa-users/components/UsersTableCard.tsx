@@ -59,7 +59,7 @@ export function UsersTableCard(props: Props) {
           type="button"
           onClick={onReload}
           disabled={loadingUsers}
-          className="text-xs rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-slate-700 hover:border-emerald-500 hover:text-emerald-600 shadow-sm transition disabled:opacity-60"
+          className="text-xs rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-slate-700 hover:border-blue-500 hover:text-blue-500 shadow-sm transition disabled:opacity-60"
         >
           {loadingUsers ? "Atualizando..." : "Atualizar lista"}
         </button>

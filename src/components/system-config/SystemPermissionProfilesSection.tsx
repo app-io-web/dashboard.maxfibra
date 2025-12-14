@@ -220,7 +220,7 @@ export function SystemPermissionProfilesSection() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
             <Shield className="h-4 w-4" />
           </div>
           <div>
@@ -305,7 +305,7 @@ export function SystemPermissionProfilesSection() {
                   className={`w-full rounded-lg px-2 py-1.5 text-left text-xs transition
                     ${
                       selectedProfileId === profile.id
-                        ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                        ? "bg-blue-50 text-blue-800 border border-blue-200"
                         : "hover:bg-slate-50 text-slate-700 border border-transparent"
                     }`}
                 >
@@ -333,9 +333,9 @@ export function SystemPermissionProfilesSection() {
           {/* criar novo perfil */}
           <form
             onSubmit={handleCreateProfile}
-            className="rounded-xl border border-dashed border-emerald-200 bg-emerald-50/40 p-3"
+            className="rounded-xl border border-dashed border-blue-200 bg-blue-50/40 p-3"
           >
-            <div className="mb-2 flex items-center gap-1 text-xs font-semibold text-emerald-800">
+            <div className="mb-2 flex items-center gap-1 text-xs font-semibold text-blue-800">
               <Plus className="h-3 w-3" />
               Novo perfil
             </div>
@@ -346,7 +346,7 @@ export function SystemPermissionProfilesSection() {
                   Chave técnica
                 </label>
                 <input
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   placeholder="perfil_atendente_loja"
                   value={newKey}
                   onChange={(e) => setNewKey(e.target.value)}
@@ -358,7 +358,7 @@ export function SystemPermissionProfilesSection() {
                   Nome do perfil
                 </label>
                 <input
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   placeholder="Atendente de loja"
                   value={newLabel}
                   onChange={(e) => setNewLabel(e.target.value)}
@@ -370,7 +370,7 @@ export function SystemPermissionProfilesSection() {
                   Descrição
                 </label>
                 <textarea
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   rows={3}
                   placeholder="Acesso à tela de fichas, consulta básica de clientes, sem edição..."
                   value={newDescription}
@@ -381,7 +381,7 @@ export function SystemPermissionProfilesSection() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center justify-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {saving ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -433,7 +433,7 @@ export function SystemPermissionProfilesSection() {
                   >
                     <input
                       type="checkbox"
-                      className="mt-[3px] h-3 w-3 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                      className="mt-[3px] h-3 w-3 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
                       checked={checked}
                       onChange={() => togglePermissionKey(perm.key)}
                     />
@@ -490,7 +490,7 @@ export function SystemPermissionProfilesSection() {
                   Usuário
                 </label>
                 <select
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(e.target.value)}
                 >
@@ -508,7 +508,7 @@ export function SystemPermissionProfilesSection() {
                   Empresa
                 </label>
                 <select
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   value={selectedEmpresaId}
                   onChange={(e) => setSelectedEmpresaId(e.target.value)}
                 >
@@ -528,7 +528,7 @@ export function SystemPermissionProfilesSection() {
                     saving || !selectedUserId || !selectedEmpresaId || !selectedProfileId
                   }
                   onClick={handleAssignProfileToUser}
-                  className="inline-flex items-center gap-1 rounded-md bg-emerald-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {saving ? (
                     <Loader2 className="h-3 w-3 animate-spin" />

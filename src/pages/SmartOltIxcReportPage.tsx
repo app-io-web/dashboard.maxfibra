@@ -188,7 +188,7 @@ export function SmartOltIxcReportPage() {
             {isLos ? (
               <AlertTriangle className="h-5 w-5 text-amber-500" />
             ) : (
-              <Activity className="h-5 w-5 text-emerald-500" />
+              <Activity className="h-5 w-5 text-blue-500" />
             )}
             {title}
           </h1>
@@ -211,7 +211,7 @@ export function SmartOltIxcReportPage() {
             className={
               "rounded-xl px-3 py-1.5 text-xs font-medium border transition " +
               (kind === "ONU_OFF"
-                ? "bg-emerald-500 text-white border-emerald-500 shadow-sm"
+                ? "bg-blue-500 text-white border-blue-500 shadow-sm"
                 : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50")
             }
           >
@@ -335,7 +335,7 @@ export function SmartOltIxcReportPage() {
                   // ===== Status SmartOLT (PowerOff / LOS) =====
                   let smartLabel = "OK";
                   let smartClass =
-                    "bg-emerald-50 text-emerald-700 border-emerald-100";
+                    "bg-blue-50 text-blue-700 border-blue-100";
 
                   if (kind === "ONU_OFF") {
                     if (off) {
@@ -386,7 +386,7 @@ export function SmartOltIxcReportPage() {
                               Cliente inativo
                             </span>
                           ) : r.cliente_ativo === true ? (
-                            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 border-emerald-100">
+                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 border-blue-100">
                               Cliente ativo
                             </span>
                           ) : null}
@@ -402,7 +402,7 @@ export function SmartOltIxcReportPage() {
                               className={
                                 "inline-flex rounded-full px-2 py-0.5 border text-[10px] " +
                                 (contratoCode === "A"
-                                  ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                                  ? "bg-blue-50 text-blue-700 border-blue-100"
                                   : contratoCode === "P"
                                   ? "bg-sky-50 text-sky-700 border-sky-100"
                                   : "bg-amber-50 text-amber-700 border-amber-100")
@@ -423,7 +423,7 @@ export function SmartOltIxcReportPage() {
                               Radius inativo
                             </span>
                           ) : r.radius_ativo === true ? (
-                            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 border-emerald-100">
+                            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 border-blue-100">
                               Radius ativo
                             </span>
                           ) : null}
@@ -449,7 +449,7 @@ export function SmartOltIxcReportPage() {
                             className={
                               "inline-flex rounded-full px-2 py-0.5 border text-[10px] " +
                               (internetCode === "A"
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                                ? "bg-blue-50 text-blue-700 border-blue-100"
                                 : internetCode === "D"
                                 ? "bg-slate-50 text-slate-700 border-slate-200"
                                 : internetCode === "FA"

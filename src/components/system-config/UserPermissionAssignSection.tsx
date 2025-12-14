@@ -309,7 +309,7 @@ export function UserPermissionAssignSection({ permissions }: Props) {
       {(successMessage || errorMessage) && (
         <div className="mb-3 space-y-2">
           {successMessage && (
-            <div className="flex items-start gap-2 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+            <div className="flex items-start gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
               <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0" />
               <span>{successMessage}</span>
             </div>

@@ -224,8 +224,8 @@ export function BannersEmpresariaisSection() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
-            <ImageIcon className="w-5 h-5 text-emerald-600" />
+          <div className="p-2 rounded-xl bg-blue-50 border border-blue-200">
+            <ImageIcon className="w-5 h-5 text-blue-500" />
           </div>
           <div>
             <h1 className="text-lg font-semibold text-slate-800">
@@ -256,7 +256,7 @@ export function BannersEmpresariaisSection() {
               "inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg border shadow-sm",
               "sm:w-auto w-full min-w-max",
               showPreviews
-                ? "bg-emerald-50 border-emerald-300 text-emerald-700"
+                ? "bg-blue-50 border-blue-300 text-blue-700"
                 : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50",
             ].join(" ")}
           >
@@ -279,7 +279,7 @@ export function BannersEmpresariaisSection() {
             type="button"
             onClick={handleCreateNew}
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg
-               bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm
+               bg-blue-600 hover:bg-blue-500 text-white shadow-sm
                sm:w-auto w-full min-w-max"
           >
             <Plus className="w-4 h-4" />
@@ -298,7 +298,7 @@ export function BannersEmpresariaisSection() {
             </div>
           )}
           {successMessage && (
-            <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700">
+            <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-md bg-blue-50 border border-blue-200 text-blue-700">
               <CheckCircle2 className="w-4 h-4" />
               <span>{successMessage}</span>
             </div>
@@ -331,7 +331,7 @@ export function BannersEmpresariaisSection() {
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 value={form.titulo}
                 onChange={(e) => handleChange("titulo", e.target.value)}
                 placeholder="Ex: Banner Empresarial Principal"
@@ -344,7 +344,7 @@ export function BannersEmpresariaisSection() {
                 type="checkbox"
                 checked={form.ativo}
                 onChange={(e) => handleChange("ativo", e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                className="h-4 w-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
               />
               <label
                 htmlFor="ativo_empresarial"
@@ -362,7 +362,7 @@ export function BannersEmpresariaisSection() {
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 value={form.banners1080p}
                 onChange={(e) => handleChange("banners1080p", e.target.value)}
                 placeholder="URL da imagem 1920x1080"
@@ -375,7 +375,7 @@ export function BannersEmpresariaisSection() {
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 value={form.banners2k}
                 onChange={(e) => handleChange("banners2k", e.target.value)}
                 placeholder="URL da imagem 2K"
@@ -388,7 +388,7 @@ export function BannersEmpresariaisSection() {
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 value={form.banners4k}
                 onChange={(e) => handleChange("banners4k", e.target.value)}
                 placeholder="URL da imagem 4K"
@@ -401,7 +401,7 @@ export function BannersEmpresariaisSection() {
               </label>
               <input
                 type="text"
-                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 value={form.bannersMobile}
                 onChange={(e) => handleChange("bannersMobile", e.target.value)}
                 placeholder="URL da imagem mobile"
@@ -440,7 +440,7 @@ export function BannersEmpresariaisSection() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white disabled:opacity-60 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-medium rounded-lg bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-60 shadow-sm"
             >
               <Save className={`w-4 h-4 ${saving ? "animate-pulse" : ""}`} />
               {isEditing ? "Salvar alterações" : "Criar banner"}
@@ -530,13 +530,13 @@ export function BannersEmpresariaisSection() {
                           <span
                             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${
                               ativo
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                ? "bg-blue-50 text-blue-700 border border-blue-200"
                                 : "bg-slate-100 text-slate-600 border border-slate-200"
                             }`}
                           >
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${
-                                ativo ? "bg-emerald-500" : "bg-slate-400"
+                                ativo ? "bg-blue-500" : "bg-slate-400"
                               }`}
                             />
                             {ativo ? "Ativo" : "Inativo"}

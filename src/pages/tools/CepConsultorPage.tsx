@@ -62,7 +62,7 @@ export function CepConsultorPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <header className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100 text-blue-500">
           <MapPin className="h-5 w-5" />
         </div>
         <div>
@@ -86,7 +86,7 @@ export function CepConsultorPage() {
             {/* Linha com input + botão */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="flex-1">
-                <div className="flex items-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 transition focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100">
+                <div className="flex items-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-3 py-2 transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
                 <MapPin className="w-4 h-4 text-slate-500" />
                 <input
                     type="text"
@@ -103,7 +103,7 @@ export function CepConsultorPage() {
                 disabled={loading}
                 className={[
                 "w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition",
-                "bg-emerald-500 text-white hover:bg-emerald-600",
+                "bg-blue-500 text-white hover:bg-blue-600",
                 loading ? "opacity-60 cursor-not-allowed" : "",
                 ].join(" ")}
             >
@@ -131,7 +131,7 @@ export function CepConsultorPage() {
                 Resultado da consulta
                 </div>
                 {data.cep && (
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-mono text-emerald-700 border border-emerald-100">
+                <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-mono text-blue-700 border border-blue-100">
                     {data.cep}
                 </span>
                 )}

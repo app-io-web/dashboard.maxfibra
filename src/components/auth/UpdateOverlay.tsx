@@ -59,8 +59,8 @@ export function UpdateOverlay({
     <div className="fixed inset-0 z-[9999] bg-slate-950/40 backdrop-blur-sm flex items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl border border-slate-200 p-6">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center">
-            <div className="h-4 w-4 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+          <div className="h-10 w-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center">
+            <div className="h-4 w-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
           </div>
           <div>
             <div className="text-sm font-semibold text-slate-900">
@@ -75,7 +75,7 @@ export function UpdateOverlay({
         <div className="mt-4">
           <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
             <div
-              className="h-full bg-emerald-500 transition-all duration-500 ease-out"
+              className="h-full bg-blue-500 transition-all duration-500 ease-out"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -91,7 +91,7 @@ export function UpdateOverlay({
               <span className="text-xs text-slate-700">{s.label}</span>
               <span
                 className={`text-[11px] font-medium ${
-                  s.done ? "text-emerald-600" : "text-slate-400"
+                  s.done ? "text-blue-500" : "text-slate-400"
                 }`}
               >
                 {s.done ? "OK" : "…"}

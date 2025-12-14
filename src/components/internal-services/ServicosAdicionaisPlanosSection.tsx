@@ -239,7 +239,7 @@ export function ServicosAdicionaisPlanosSection() {
             >
               <input
                 type="checkbox"
-                className="h-3 w-3 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500"
+                className="h-3 w-3 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
                 checked={checked}
                 onChange={() => toggleServico(field, servico)}
               />
@@ -255,7 +255,7 @@ export function ServicosAdicionaisPlanosSection() {
     <section className="rounded-2xl bg-white/90 border border-slate-200 shadow-md p-6">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow">
+          <div className="h-10 w-10 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow">
             <Wrench className="w-5 h-5" />
           </div>
           <div>
@@ -297,7 +297,7 @@ export function ServicosAdicionaisPlanosSection() {
           )}
 
           {successMsg && (
-            <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-2 text-sm text-blue-700 bg-blue-50 border border-blue-100 rounded-xl px-3 py-2">
               <CheckCircle2 className="w-4 h-4" />
               <span>{successMsg}</span>
             </div>
@@ -315,7 +315,7 @@ export function ServicosAdicionaisPlanosSection() {
                   setForm((prev) => ({ ...prev, title: e.target.value }))
                 }
                 placeholder="Ex: Config padrão de serviços por plano"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60 focus:border-emerald-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500"
               />
               <p className="text-[11px] text-slate-400">
                 Apenas um registro já resolve (padrão global), mas você pode
@@ -328,7 +328,7 @@ export function ServicosAdicionaisPlanosSection() {
             {/* Plano Turbo */}
             <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-3">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold text-emerald-700 uppercase">
+                <span className="text-xs font-semibold text-blue-700 uppercase">
                   Plano Turbo
                 </span>
               </div>
@@ -370,7 +370,7 @@ export function ServicosAdicionaisPlanosSection() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-white text-sm font-medium shadow hover:bg-emerald-600 transition disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500 text-white text-sm font-medium shadow hover:bg-blue-600 transition disabled:opacity-60"
             >
               <Save
                 className={["w-4 h-4", saving ? "animate-spin" : ""].join(" ")}

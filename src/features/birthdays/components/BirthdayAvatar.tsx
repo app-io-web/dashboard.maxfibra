@@ -19,7 +19,7 @@ export function BirthdayAvatar(props: {
 
   const colorClass =
     variant === "today"
-      ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white"
+      ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
       : "bg-[#1282A2] text-white";
 
   return (

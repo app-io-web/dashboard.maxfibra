@@ -231,7 +231,7 @@ export function MonitoringSmartOltSection() {
         <div
           className="
             flex h-10 w-10 items-center justify-center 
-            rounded-xl bg-emerald-500/10 text-emerald-600
+            rounded-xl bg-blue-500/10 text-blue-500
           "
         >
           <LayoutDashboard className="h-5 w-5" />
@@ -273,7 +273,7 @@ export function MonitoringSmartOltSection() {
           <div className="flex items-start gap-3">
             <div
               className="
-                mt-0.5 rounded-lg bg-slate-100 p-1.5 text-emerald-600
+                mt-0.5 rounded-lg bg-slate-100 p-1.5 text-blue-500
               "
             >
               <SlidersHorizontal className="h-4 w-4" />
@@ -339,7 +339,7 @@ export function MonitoringSmartOltSection() {
           <div className="flex items-start gap-3">
             <div
               className="
-                mt-0.5 rounded-lg bg-slate-100 p-1.5 text-emerald-600
+                mt-0.5 rounded-lg bg-slate-100 p-1.5 text-blue-500
               "
             >
               <SlidersHorizontal className="h-4 w-4" />
@@ -406,7 +406,7 @@ export function MonitoringSmartOltSection() {
           <div className="flex items-start gap-3">
             <div
               className="
-                mt-0.5 rounded-lg bg-slate-100 p-1.5 text-emerald-600
+                mt-0.5 rounded-lg bg-slate-100 p-1.5 text-blue-500
               "
             >
               <SlidersHorizontal className="h-4 w-4" />
@@ -430,7 +430,7 @@ export function MonitoringSmartOltSection() {
             className={[
               "relative inline-flex h-6 w-11 items-center rounded-full border transition-all",
               allowManualRun
-                ? "bg-emerald-500 border-emerald-500"
+                ? "bg-blue-500 border-blue-500"
                 : "bg-slate-300 border-slate-300",
               loadingManualFlag || savingManualFlag
                 ? "opacity-60 cursor-not-allowed"
@@ -459,7 +459,7 @@ export function MonitoringSmartOltSection() {
             <div className="flex items-start gap-3">
               <div
                 className="
-                  mt-0.5 rounded-lg bg-slate-100 p-1.5 text-emerald-600
+                  mt-0.5 rounded-lg bg-slate-100 p-1.5 text-blue-500
                 "
               >
                 <SlidersHorizontal className="h-4 w-4" />
@@ -496,7 +496,7 @@ export function MonitoringSmartOltSection() {
             className={[
               "relative inline-flex h-6 w-11 items-center rounded-full border transition-all",
               allowManualLosRun
-                ? "bg-emerald-500 border-emerald-500"
+                ? "bg-blue-500 border-blue-500"
                 : "bg-slate-300 border-slate-300",
               loadingManualLosFlag || savingManualLosFlag
                 ? "opacity-60 cursor-not-allowed"

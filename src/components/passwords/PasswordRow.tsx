@@ -65,7 +65,7 @@ export function PasswordRow({
             href={item.url}
             target="_blank"
             rel="noreferrer"
-            className="text-xs text-emerald-700 underline underline-offset-2"
+            className="text-xs text-blue-700 underline underline-offset-2"
           >
             Abrir
           </a>
@@ -102,7 +102,7 @@ export function PasswordRow({
           <button
             type="button"
             onClick={onCopy}
-            className="text-xs font-medium text-emerald-700 underline-offset-2 hover:underline"
+            className="text-xs font-medium text-blue-700 underline-offset-2 hover:underline"
           >
             Copiar
           </button>

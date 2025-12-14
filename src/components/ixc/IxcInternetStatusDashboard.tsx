@@ -98,7 +98,7 @@ export function IxcInternetStatusDashboard({
     };
 
     return [
-      makeItem("Normal", data.internet_normal, "#10b981"), // emerald-500
+      makeItem("Normal", data.internet_normal, "#10b981"), // blue-500
       makeItem("Bloqueada", data.internet_bloqueada, "#f59e0b"), // amber-500
       makeItem("Outros", data.outros_status_internet, "#64748b"), // slate-500
     ];
@@ -162,7 +162,7 @@ export function IxcInternetStatusDashboard({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="flex items-center gap-2 text-xl font-semibold text-slate-900">
-              <Activity className="w-5 h-5 text-emerald-500" />
+              <Activity className="w-5 h-5 text-blue-500" />
               Painel IXC – Status de Internet
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -193,8 +193,8 @@ export function IxcInternetStatusDashboard({
                       (S)
                     </p>
                   </div>
-                  <div className="rounded-xl bg-emerald-50 p-3">
-                    <Wifi className="w-6 h-6 text-emerald-500" />
+                  <div className="rounded-xl bg-blue-50 p-3">
+                    <Wifi className="w-6 h-6 text-blue-500" />
                   </div>
                 </div>
               </div>
@@ -208,15 +208,15 @@ export function IxcInternetStatusDashboard({
                     <p className="text-xs font-medium text-slate-500 uppercase">
                       Internet normal
                     </p>
-                    <p className="mt-2 text-2xl font-semibold text-emerald-600">
+                    <p className="mt-2 text-2xl font-semibold text-blue-500">
                       {data.internet_normal.toLocaleString("pt-BR")}
                     </p>
-                    <p className="mt-1 text-xs text-emerald-700/80">
+                    <p className="mt-1 text-xs text-blue-700/80">
                       {percentual(data.internet_normal)} dos contratos
                     </p>
                   </div>
-                  <div className="rounded-xl bg-emerald-50 p-3">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                  <div className="rounded-xl bg-blue-50 p-3">
+                    <div className="w-3 h-3 rounded-full bg-blue-500" />
                   </div>
                 </div>
               </div>

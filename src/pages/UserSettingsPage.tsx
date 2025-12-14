@@ -193,7 +193,7 @@ export function UserSettingsPage() {
 
               {isCentralAdmin && (
                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex items-center rounded-full bg-emerald-500 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-md border border-white">
+                  <span className="inline-flex items-center rounded-full bg-blue-500 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-md border border-white">
                     CENTRAL&nbsp;ADMIN
                   </span>
                 </div>
@@ -262,7 +262,7 @@ export function UserSettingsPage() {
             )}
 
             {successMessage && (
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
                 {successMessage}
               </div>
             )}

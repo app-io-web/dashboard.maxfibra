@@ -209,7 +209,7 @@ export function UserPermissionToolsSection() {
         {hasOwner !== null && (
           <div className="text-xs">
             {hasOwner ? (
-              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-700">
+              <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-[11px] font-medium text-blue-700">
                 Usuário já possui permissão OWNER global
               </span>
             ) : (

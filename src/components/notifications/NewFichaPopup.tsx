@@ -169,14 +169,14 @@ export function NewFichaPopup() {
             goToFicha();
           }
         }}
-        className="group flex w-80 items-start gap-3 rounded-2xl border border-emerald-100 bg-white/95 p-4 text-left shadow-lg shadow-emerald-100/40 ring-1 ring-emerald-50 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl cursor-pointer"
+        className="group flex w-80 items-start gap-3 rounded-2xl border border-blue-100 bg-white/95 p-4 text-left shadow-lg shadow-blue-100/40 ring-1 ring-blue-50 transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-xl cursor-pointer"
       >
-        <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50">
-          <FileText className="h-5 w-5 text-emerald-600" />
+        <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
+          <FileText className="h-5 w-5 text-blue-500" />
         </div>
 
         <div className="flex-1 space-y-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-600">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-500">
             Nova ficha recebida
           </p>
 
@@ -198,7 +198,7 @@ export function NewFichaPopup() {
             </p>
           )}
 
-          <span className="inline-flex items-center text-[11px] font-medium text-emerald-600">
+          <span className="inline-flex items-center text-[11px] font-medium text-blue-500">
             Ver ficha
             <span className="ml-1 text-[13px]">↗</span>
           </span>

@@ -206,8 +206,8 @@ export function DuvidasFrequentesEditPage() {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-              <HelpCircle className="h-5 w-5 text-emerald-600" />
+            <div className="h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
+              <HelpCircle className="h-5 w-5 text-blue-500" />
             </div>
             <div>
               <h1 className="text-lg font-semibold text-slate-900">
@@ -246,7 +246,7 @@ export function DuvidasFrequentesEditPage() {
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, duvidas: e.target.value }))
               }
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="Ex.: Informações gerais sobre a Max Fibra"
             />
             <p className="text-[11px] text-slate-400">
@@ -267,7 +267,7 @@ export function DuvidasFrequentesEditPage() {
                     qaItems: [...prev.qaItems, { ...EMPTY_QA }],
                   }))
                 }
-                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-50 px-3 py-1 text-[11px] font-medium text-emerald-700 hover:bg-emerald-100"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 px-3 py-1 text-[11px] font-medium text-blue-700 hover:bg-blue-100"
               >
                 <Plus className="h-3 w-3" />
                 Adicionar pergunta
@@ -319,7 +319,7 @@ export function DuvidasFrequentesEditPage() {
                         return { ...prev, qaItems: clone };
                       })
                     }
-                    className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     placeholder="Ex.: O que é fibra óptica?"
                   />
                 </div>
@@ -341,7 +341,7 @@ export function DuvidasFrequentesEditPage() {
                       })
                     }
                     rows={4}
-                    className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     placeholder="Texto da resposta (pode usar **negrito**, _itálico_, etc)."
                   />
                 </div>
@@ -361,7 +361,7 @@ export function DuvidasFrequentesEditPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-70"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-70"
             >
               <Save className="h-3.5 w-3.5" />
               {saving

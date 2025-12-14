@@ -119,7 +119,7 @@ export function FraseDinamicaSection() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
               <Type className="w-4 h-4" />
             </span>
             Frase dinâmica do site
@@ -156,7 +156,7 @@ export function FraseDinamicaSection() {
             )}
 
             {success && (
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
                 {success}
               </div>
             )}
@@ -168,7 +168,7 @@ export function FraseDinamicaSection() {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
                   value={frase.Part_Frase_Sem_Efeito}
                   onChange={(e) =>
                     setFrase((old) =>
@@ -187,7 +187,7 @@ export function FraseDinamicaSection() {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
                   value={frase.Part_Frase_Com_Efeito}
                   onChange={(e) =>
                     setFrase((old) =>
@@ -207,7 +207,7 @@ export function FraseDinamicaSection() {
                 </label>
 
                 <select
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
                   value={frase.Efeito}
                   onChange={(e) =>
                     setFrase((old) =>
@@ -264,7 +264,7 @@ export function FraseDinamicaSection() {
 
                   <input
                     type="text"
-                    className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                    className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
                     value={frase.colorTextAnimado}
                     onChange={(e) =>
                       setFrase((old) =>
@@ -334,7 +334,7 @@ export function FraseDinamicaSection() {
 
               <button
                 type="submit"
-                className="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-white shadow hover:bg-emerald-600 disabled:opacity-60"
+                className="inline-flex items-center gap-1 rounded-lg bg-blue-500 px-4 py-1.5 text-xs font-semibold text-white shadow hover:bg-blue-600 disabled:opacity-60"
                 disabled={saving || loading}
               >
                 <Save className="w-3 h-3" />

@@ -23,7 +23,7 @@ function statusBadgeClass(status: SupportTicketStatus) {
     case "ATRIBUIDO":
       return "bg-sky-50 text-sky-700 border border-sky-200";
     case "SOLUCIONADO":
-      return "bg-emerald-50 text-emerald-700 border border-emerald-200";
+      return "bg-blue-50 text-blue-700 border border-blue-200";
     case "FECHADO":
       return "bg-slate-200 text-slate-700 border border-slate-300";
     default:

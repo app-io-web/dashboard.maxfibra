@@ -401,7 +401,7 @@ export function SmartShortOLTPage() {
                     className={
                       o.status === "offline"
                         ? "text-red-600 font-semibold"
-                        : "text-emerald-600 font-semibold"
+                        : "text-blue-500 font-semibold"
                     }
                   >
                     {o.status}

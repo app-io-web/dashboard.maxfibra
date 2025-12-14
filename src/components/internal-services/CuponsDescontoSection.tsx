@@ -167,7 +167,7 @@ export function CuponsDescontoSection() {
     <section className="space-y-6">
       <header className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Tag className="w-6 h-6 text-emerald-600" />
+          <Tag className="w-6 h-6 text-blue-500" />
           <div>
             <h2 className="text-lg font-semibold text-slate-900">
               Cupons de Desconto
@@ -197,7 +197,7 @@ export function CuponsDescontoSection() {
       )}
 
       {success && (
-        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
           <CheckCircle2 className="w-4 h-4" />
           <span>{success}</span>
         </div>
@@ -294,7 +294,7 @@ export function CuponsDescontoSection() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-60"
             >
               <Save className="w-4 h-4" />
               {saving

@@ -61,7 +61,7 @@ export function ShortcutCard({ shortcut, onEdit, onDelete }: Props) {
             </span>
 
             {shortcut.show_on_dashboard && (
-              <span className="ml-2 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 border border-emerald-100">
+              <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 border border-blue-100">
                 Dashboard
               </span>
             )}

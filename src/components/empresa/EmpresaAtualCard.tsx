@@ -67,7 +67,7 @@ export function EmpresaAtualCard({
         {empresa.display_name || "Empresa sem nome"}
       </h3>
 
-      <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-[2px] text-[10px] font-semibold uppercase tracking-wide">
+      <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-100 px-2 py-[2px] text-[10px] font-semibold uppercase tracking-wide">
         Empresa atual
       </span>
     </div>
@@ -87,7 +87,7 @@ export function EmpresaAtualCard({
               {canViewUsersButton && (
                 <button
                   onClick={onGoToUsers}
-                  className="inline-flex items-center justify-center rounded-lg bg-emerald-500 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-400 transition w-full md:w-auto"
+                  className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-5 py-2 text-sm font-medium text-white hover:bg-blue-400 transition w-full md:w-auto"
                 >
                   Gerenciar usuários da empresa
                 </button>

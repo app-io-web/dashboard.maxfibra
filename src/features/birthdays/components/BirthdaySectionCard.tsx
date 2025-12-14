@@ -30,7 +30,7 @@ export function BirthdaySectionCard({
         </div>
 
         {isToday ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 border border-emerald-100">
+          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-800 border border-blue-100">
             <PartyPopper size={14} strokeWidth={2} />
             {items.length} {items.length === 1 ? "aniversário" : "aniversários"}
           </span>

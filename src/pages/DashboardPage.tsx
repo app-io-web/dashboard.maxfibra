@@ -167,7 +167,7 @@ export function DashboardPage() {
             <button
               onClick={handleTestNotification}
               disabled={testNotifLoading}
-              className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-100 hover:bg-emerald-500/20 transition disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg border border-blue-500/40 bg-blue-500/10 px-3 py-1.5 text-sm font-medium text-blue-100 hover:bg-blue-500/20 transition disabled:opacity-60"
             >
               <BellRing className="h-4 w-4" />
               {testNotifLoading ? "Enviando..." : "Testar notificação"}

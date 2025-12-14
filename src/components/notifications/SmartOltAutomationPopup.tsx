@@ -211,7 +211,7 @@ export function SmartOltAutomationPopup() {
               "mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl " +
               (isLos
                 ? "bg-amber-50 text-amber-600 border border-amber-100"
-                : "bg-emerald-50 text-emerald-600 border border-emerald-100")
+                : "bg-blue-50 text-blue-500 border border-blue-100")
             }
           >
             {isLos ? (
@@ -280,8 +280,8 @@ export function SmartOltAutomationPopup() {
                   className={
                     "rounded-xl px-3 py-1.5 text-xs font-semibold shadow-sm transition " +
                     (reportDisabled
-                      ? "bg-emerald-100 text-emerald-300 cursor-not-allowed"
-                      : "bg-emerald-500 text-white hover:bg-emerald-600")
+                      ? "bg-blue-100 text-blue-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600")
                   }
                 >
                   Ver relatório detalhado

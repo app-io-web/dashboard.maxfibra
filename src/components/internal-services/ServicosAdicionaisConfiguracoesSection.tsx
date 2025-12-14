@@ -314,7 +314,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
                   onChange={(e) =>
                     handleServiceChange(planoKey, index, "nome", e.target.value)
                   }
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Ex: Estuda, UbookPlus, PlayKids..."
                 />
               </div>
@@ -329,7 +329,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
                   onChange={(e) =>
                     handleServiceChange(planoKey, index, "url", e.target.value)
                   }
-                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full rounded-md border border-slate-200 bg-white px-2 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="https://s3.nexusnerds.com.br/maxfibra/..."
                 />
               </div>
@@ -354,7 +354,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
       {/* Cabeçalho */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-500/90 text-white shadow">
+          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-500/90 text-white shadow">
             <Wrench className="w-5 h-5" />
           </div>
           <div>
@@ -386,7 +386,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
       )}
 
       {successMsg && (
-        <div className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
           <CheckCircle2 className="w-4 h-4 mt-0.5" />
           <p>{successMsg}</p>
         </div>
@@ -408,7 +408,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
                   type="text"
                   value={form.title}
                   onChange={(e) => handleChangeField("title", e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Ex: Serviços adicionais Max Fibra"
                 />
               </div>
@@ -422,7 +422,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
                   onChange={(e) =>
                     handleChangeField("tagMaisVendido", e.target.value)
                   }
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Nenhum</option>
                   <option value="Turbo">Turbo</option>
@@ -450,7 +450,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
               <PlanoCard
                 planoKey="turboServices"
                 title="Plano Turbo"
-                colorClass="text-emerald-700"
+                colorClass="text-blue-700"
                 campoLabel='Campo: "Plano - Turbo - Serviço Adicional"'
               />
               <PlanoCard
@@ -472,7 +472,7 @@ export function ServicosAdicionaisConfiguracoesSection() {
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-emerald-600 transition disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-xs font-semibold text-white shadow hover:bg-blue-600 transition disabled:opacity-60"
               >
                 <Save className={`w-4 h-4 ${saving ? "animate-spin" : ""}`} />
                 {saving ? "Salvando..." : "Salvar configurações"}

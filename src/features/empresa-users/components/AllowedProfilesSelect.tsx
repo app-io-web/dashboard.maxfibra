@@ -43,8 +43,8 @@ export function AllowedProfilesSelect(props: Props) {
                   className={[
                     "rounded-full border px-3 py-1 text-[11px] transition",
                     checked
-                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-emerald-500 hover:bg-emerald-50",
+                      ? "border-blue-300 bg-blue-50 text-blue-800"
+                      : "border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-500 hover:bg-blue-50",
                   ].join(" ")}
                   title={p.slug || p.key || p.name}
                 >

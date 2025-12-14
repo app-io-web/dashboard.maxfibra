@@ -63,8 +63,8 @@ function CopyToast({ toast, onClose }: { toast: ToastState; onClose: () => void 
 
   return (
     <div className="fixed top-8 right-4 z-50">
-      <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-white/95 px-3 py-2 shadow-lg min-w-[220px]">
-        <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+      <div className="flex items-start gap-2 rounded-xl border border-blue-200 bg-white/95 px-3 py-2 shadow-lg min-w-[220px]">
+        <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-blue-700">
           <Copy className="w-3.5 h-3.5" />
         </div>
         <div className="flex-1">
@@ -100,7 +100,7 @@ function CopyButton({ value, label, enabled, onCopied }: CopyButtonProps) {
     <button
       type="button"
       onClick={handleCopy}
-      className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-1 text-[10px] font-medium text-slate-500 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600"
+      className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-1 text-[10px] font-medium text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-500"
       title={`Copiar ${label}`}
     >
       <Copy className="w-3 h-3" />
@@ -200,13 +200,13 @@ export function ClienteFichaDetailPage() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:border-emerald-300 hover:text-emerald-600"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-500"
           >
             <ArrowLeft className="w-3 h-3" />
             Voltar
           </button>
 
-          <div className="h-11 w-11 flex items-center justify-center rounded-xl bg-emerald-500 text-white shadow">
+          <div className="h-11 w-11 flex items-center justify-center rounded-xl bg-blue-500 text-white shadow">
             <User className="w-6 h-6" />
           </div>
           <div>
@@ -217,7 +217,7 @@ export function ClienteFichaDetailPage() {
               <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px]">
                 <span className="text-slate-500">
                   Protocolo{" "}
-                  <span className="font-mono text-emerald-700">
+                  <span className="font-mono text-blue-700">
                     {ficha.protocolo}
                   </span>
                 </span>
@@ -229,7 +229,7 @@ export function ClienteFichaDetailPage() {
                 )}
 
                 {ficha.desconto && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 font-semibold text-blue-700 border border-blue-200">
                     Desconto: {formatCurrency(ficha.desconto)}
                   </span>
                 )}
@@ -248,7 +248,7 @@ export function ClienteFichaDetailPage() {
             onClick={() => setCopyEnabled((prev) => !prev)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full border transition ${
               copyEnabled
-                ? "border-emerald-500 bg-emerald-500/90"
+                ? "border-blue-500 bg-blue-500/90"
                 : "border-slate-300 bg-slate-200"
             }`}
           >
@@ -277,14 +277,14 @@ export function ClienteFichaDetailPage() {
       {!loading && !error && ficha && (
         <div className="space-y-4">
           {/* Card principal tipo "notificação" */}
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 flex gap-3 items-start">
+          <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-4 flex gap-3 items-start">
             <div className="mt-1">
-              <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-white text-emerald-600 border border-emerald-200">
+              <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-white text-blue-500 border border-blue-200">
                 <FileText className="w-5 h-5" />
               </div>
             </div>
             <div className="flex-1 space-y-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-600">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-500">
                 Nova ficha recebida
               </p>
               <h2 className="text-lg font-semibold text-slate-900">
@@ -295,7 +295,7 @@ export function ClienteFichaDetailPage() {
                 {ficha.plano && (
                   <>
                     <span className="text-slate-400">•</span>
-                    <span className="inline-flex items-center rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex items-center rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-medium text-blue-700 border border-blue-200">
                       Plano: {ficha.plano}
                     </span>
                   </>
@@ -311,7 +311,7 @@ export function ClienteFichaDetailPage() {
                 {ficha.vencimento && (
                   <>
                     <span className="text-slate-400">•</span>
-                    <span className="inline-flex items-center rounded-full bg-emerald-600/90 px-2 py-0.5 text-[11px] font-semibold text-white">
+                    <span className="inline-flex items-center rounded-full bg-blue-600/90 px-2 py-0.5 text-[11px] font-semibold text-white">
                       Vencimento: dia {ficha.vencimento}
                     </span>
                   </>
@@ -581,7 +581,7 @@ export function ClienteFichaDetailPage() {
                 {/* Plano / Oferta */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
+                    <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-blue-50 text-blue-700 border border-blue-100">
                       <CreditCard className="w-4 h-4" />
                     </div>
                     <div>
@@ -606,7 +606,7 @@ export function ClienteFichaDetailPage() {
                     )}
 
                     {ficha.vencimento && (
-                      <p className="inline-flex items-center rounded-full bg-emerald-600/95 px-2 py-0.5 text-[11px] font-semibold text-white">
+                      <p className="inline-flex items-center rounded-full bg-blue-600/95 px-2 py-0.5 text-[11px] font-semibold text-white">
                         Vencimento: dia {ficha.vencimento}
                       </p>
                     )}
@@ -618,7 +618,7 @@ export function ClienteFichaDetailPage() {
                         </span>
                       )}
                       {ficha.desconto && (
-                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                        <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 border border-blue-200">
                           Desconto: {formatCurrency(ficha.desconto)}
                         </span>
                       )}
@@ -629,7 +629,7 @@ export function ClienteFichaDetailPage() {
                 {/* Vendedor */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-slate-900 text-emerald-400">
+                    <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-slate-900 text-blue-400">
                       <User className="w-4 h-4" />
                     </div>
                     <div>

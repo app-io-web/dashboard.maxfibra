@@ -154,7 +154,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
             Ajuste os textos exibidos no site
           </p>
         </div>
-        <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-700">
+        <span className="rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-blue-700">
           Site
         </span>
       </div>
@@ -171,7 +171,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
               onChange({ ...plano, tecnologia: e.target.value })
             }
             placeholder='Ex: "100% Fibra Óptica"'
-            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-200"
+            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200"
           />
         </div>
 
@@ -203,7 +203,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
             }
             placeholder='Ex: "Moldem Wi-Fi 5G Premium"'
             disabled={!plano.mostrarModem}
-            className={`mt-0.5 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-200 ${modemDisabledClass}`}
+            className={`mt-0.5 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200 ${modemDisabledClass}`}
           />
         </div>
 
@@ -218,7 +218,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
               onChange({ ...plano, valor: e.target.value })
             }
             placeholder='Ex: "R$ 199,90"'
-            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-200"
+            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200"
           />
         </div>
 
@@ -250,7 +250,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
             }
             placeholder='Ex: "Fixo", "Dinâmico"'
             disabled={!plano.mostrarIp}
-            className={`mt-0.5 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-200 ${ipDisabledClass}`}
+            className={`mt-0.5 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200 ${ipDisabledClass}`}
           />
         </div>
 
@@ -265,7 +265,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
               onChange({ ...plano, tempoSla: e.target.value })
             }
             placeholder='Ex: "48 horas"'
-            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-200"
+            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200"
           />
         </div>
 
@@ -280,7 +280,7 @@ function PlanoCard({ title, plano, onChange }: PlanoCardProps) {
               onChange({ ...plano, suporte: e.target.value })
             }
             placeholder='Ex: "Suporte especializado"'
-            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-200"
+            className="mt-0.5 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-800 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200"
           />
         </div>
       </div>
@@ -449,7 +449,7 @@ export function PlanosEmpresariaisSection() {
       <section className="space-y-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+            <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-500">
               <Briefcase className="h-5 w-5" />
             </div>
             <div>
@@ -497,7 +497,7 @@ export function PlanosEmpresariaisSection() {
                 type="button"
                 onClick={handleCreateEmpty}
                 disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <Save className="h-3.5 w-3.5" />
                 {saving ? "Criando..." : "Criar registro padrão"}
@@ -540,7 +540,7 @@ export function PlanosEmpresariaisSection() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   <Save className="h-4 w-4" />
                   {saving ? "Salvando..." : "Salvar alterações"}

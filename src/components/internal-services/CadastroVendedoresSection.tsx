@@ -246,7 +246,7 @@ export function CadastroVendedoresSection() {
       {/* Cabeçalho da section */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-emerald-500 text-white shadow">
+          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-500 text-white shadow">
             <Users className="w-5 h-5" />
           </div>
           <div>
@@ -281,7 +281,7 @@ export function CadastroVendedoresSection() {
             </div>
           )}
           {success && (
-            <div className="flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+            <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700">
               <CheckCircle2 className="w-4 h-4 mt-0.5" />
               <span>{success}</span>
             </div>
@@ -319,7 +319,7 @@ export function CadastroVendedoresSection() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed transition"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed transition"
             >
               <Save className="w-4 h-4" />
               {saving
@@ -340,7 +340,7 @@ export function CadastroVendedoresSection() {
               type="text"
               value={form.nome}
               onChange={(e) => handleChange("nome", e.target.value)}
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="Nome curto para exibição"
             />
           </div>
@@ -355,7 +355,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("nomeCadastro", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="Nome completo"
             />
           </div>
@@ -369,7 +369,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("classificacao", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/60"
             >
               <option value="Ouro">Ouro</option>
               <option value="Prata">Prata</option>
@@ -387,7 +387,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("telefone", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="+55..."
             />
           </div>
@@ -402,7 +402,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("email", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="vendedor@empresa.com"
             />
           </div>
@@ -416,7 +416,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("tipoVendedor", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/60"
             >
               <option value="interno">Interno</option>
               <option value="Externo">Externo</option>
@@ -431,7 +431,7 @@ export function CadastroVendedoresSection() {
               type="text"
               value={form.pix}
               onChange={(e) => handleChange("pix", e.target.value)}
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="CPF / telefone / e-mail"
             />
           </div>
@@ -445,7 +445,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("tipoPix", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/60"
             >
               <option value="CPF">CPF</option>
               <option value="Telefone">Telefone</option>
@@ -462,7 +462,7 @@ export function CadastroVendedoresSection() {
               type="text"
               value={form.cpf}
               onChange={(e) => handleChange("cpf", e.target.value)}
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="000.000.000-00"
             />
           </div>
@@ -477,7 +477,7 @@ export function CadastroVendedoresSection() {
               onChange={(e) =>
                 handleChange("codigo", e.target.value)
               }
-              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/60"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/60"
               placeholder="Ex: 126"
             />
           </div>
@@ -555,7 +555,7 @@ export function CadastroVendedoresSection() {
                     <tr
                       key={v.id}
                       className={`border-b border-slate-50 hover:bg-slate-50/60 ${
-                        emEdicao ? "bg-emerald-50/40" : ""
+                        emEdicao ? "bg-blue-50/40" : ""
                       }`}
                     >
                       <td className="py-2 pr-3">
@@ -572,7 +572,7 @@ export function CadastroVendedoresSection() {
                         </div>
                       </td>
                       <td className="py-2 px-3">
-                        <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 text-[11px]">
+                        <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 text-[11px]">
                           {v["Classificação"] || "-"}
                         </span>
                       </td>
@@ -604,7 +604,7 @@ export function CadastroVendedoresSection() {
                         >
                           {ativo ? (
                             <>
-                              <ToggleRight className="w-4 h-4 text-emerald-500" />
+                              <ToggleRight className="w-4 h-4 text-blue-500" />
                               Ativo
                             </>
                           ) : (
@@ -621,7 +621,7 @@ export function CadastroVendedoresSection() {
                           onClick={() =>
                             emEdicao ? resetForm() : handleEditarClick(v)
                           }
-                          className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 hover:text-emerald-600"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 hover:text-blue-500"
                         >
                           <Edit3 className="w-4 h-4" />
                           {emEdicao ? "Cancelando..." : "Editar"}

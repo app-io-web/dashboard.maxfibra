@@ -223,7 +223,7 @@ export function PasswordsPage() {
             setCreateMessage(null);
             setCreateModalOpen(true);
           }}
-          className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-700"
+          className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white shadow-sm hover:bg-blue-700"
         >
           + Adicionar nova senha
         </button>

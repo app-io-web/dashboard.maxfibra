@@ -234,7 +234,7 @@ export function Sidebar() {
             )}
           >
             {(isToolsSectionActive || isToolsOpen) && canSeeToolsSection && (
-              <span className="pointer-events-none absolute inset-y-1 left-0 w-[3px] rounded-full bg-gradient-to-b from-cyan-400 to-emerald-400" />
+              <span className="pointer-events-none absolute inset-y-1 left-0 w-[3px] rounded-full bg-gradient-to-b from-cyan-400 to-blue-400" />
             )}
 
             <div className="flex items-center gap-2 pl-[2px]">
@@ -283,7 +283,7 @@ export function Sidebar() {
                       }
                     >
                       <div className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/80 group-hover:bg-emerald-400/90 transition" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/80 group-hover:bg-blue-400/90 transition" />
                         <span>{tool.label}</span>
                       </div>
 
@@ -305,8 +305,8 @@ export function Sidebar() {
               cx(
                 "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition mt-4 border-t border-slate-800 pt-3",
                 isActive
-                  ? "bg-slate-800 text-emerald-200"
-                  : "text-emerald-400 hover:bg-slate-800 hover:text-emerald-200"
+                  ? "bg-slate-800 text-blue-200"
+                  : "text-blue-400 hover:bg-slate-800 hover:text-blue-200"
               )
             }
           >
