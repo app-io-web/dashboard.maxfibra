@@ -215,39 +215,36 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   /**
    * ✅ LICENÇA (depende de empresaId por causa do x-empresa-id)
    */
-  const refreshLicenseStatus = useCallback(async () => {
-    if (!empresaId) {
-      setLicenseStatus(null);
-      setLicenseLoading(true); // ✅ impede modal ansioso
-      return null;
-    }
+    const refreshLicenseStatus = useCallback(async () => {
+      if (!empresaId) {
+        setLicenseStatus(null);
+        setLicenseLoading(true); // segura blocker
+        return null;
+      }
 
+      try {
+        setLicenseLoading(true);
 
-    try {
-      setLicenseLoading(true);
+        const res = await api.get<LicenseStatus>("/system/license/status", {
+          headers: { "x-empresa-id": empresaId },   // ✅ explícito
+          params: { _ts: Date.now() },              // ✅ mata cache
+        });
 
-      const res = await api.get<LicenseStatus>("/system/license/status");
-      const data = res.data ?? null;
+        const data = res.data ?? null;
+        setLicenseStatus(data);
+        return data;
+      } catch (err) {
+        console.error("[Session] erro ao atualizar licença:", err);
 
-      setLicenseStatus(data);
-      return data;
-    } catch (err) {
-      console.error("[Session] erro ao atualizar licença:", err);
+        // ✅ aqui é o pulo do gato: erro de rede não pode virar "sem licença"
+        // mantém o último status se existir, e não bloqueia “no escuro”.
+        setLicenseStatus((prev) => prev ?? null);
+        return null;
+      } finally {
+        setLicenseLoading(false);
+      }
+    }, [empresaId]);
 
-      const fallback: LicenseStatus = {
-        has_license: false,
-        is_paid: false,
-        is_expired: true,
-        is_valid_now: false,
-        expires_at: null,
-        license: null,
-      };
-      setLicenseStatus(fallback);
-      return fallback;
-    } finally {
-      setLicenseLoading(false);
-    }
-  }, [empresaId]);
 
   // ✅ 1) na primeira montagem: busca permissões logo de cara
   useEffect(() => {

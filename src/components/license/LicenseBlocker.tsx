@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../../contexts/SessionContext";
 import { api } from "../../lib/api";
@@ -12,30 +12,54 @@ import {
 
 const ALLOW_PATH_PREFIXES = ["/system/licenses"];
 
+// ⏳ janela de “primeiro acesso” pra não bloquear cedo demais
+const FIRST_ACCESS_DELAY_MS = 6000;
+
 export function LicenseBlocker() {
-  const {
-    licenseBlocked,
-    licenseStatus,
-    licenseLoading,
-    empresaId,
-  } = useSession();
+  const { licenseBlocked, licenseStatus, licenseLoading, empresaId } = useSession();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [loadingGrace, setLoadingGrace] = useState(false);
 
+  // 👇 novo: controla se já pode “valer” bloquear quando não achou licença
+  const [missingLicenseGateOpen, setMissingLicenseGateOpen] = useState(false);
+
   const allowed = useMemo(() => {
     return ALLOW_PATH_PREFIXES.some((p) => pathname.startsWith(p));
   }, [pathname]);
 
-  // 🛑 PORTEIRO MORAL DO COMPONENTE
+  // ✅ GATE: só começa a contar quando já temos empresaId e licenseStatus carregados
+  useEffect(() => {
+    if (!empresaId) return;
+    if (licenseLoading) return;
+    if (!licenseStatus) return;
+
+    // só atrasa se o status atual diz “não achei licença”
+    if (licenseStatus.has_license) {
+      setMissingLicenseGateOpen(true);
+      return;
+    }
+
+    setMissingLicenseGateOpen(false);
+    const t = window.setTimeout(() => {
+      setMissingLicenseGateOpen(true);
+    }, FIRST_ACCESS_DELAY_MS);
+
+    return () => window.clearTimeout(t);
+  }, [empresaId, licenseLoading, licenseStatus?.has_license]);
+
+  // 🛑 PORTEIRO MORAL
   // enquanto login / empresa / licença não estiverem prontos → não renderiza NADA
-  if (!empresaId || licenseLoading || !licenseStatus) {
-    return null;
-  }
+  if (!empresaId || licenseLoading || !licenseStatus) return null;
 
   // se não estiver bloqueado ou se estiver em rota permitida → nada
   if (!licenseBlocked || allowed) return null;
+
+  // ⏳ Se “não encontrou licença”, segura 6s antes de mostrar o bloqueio
+  if (!licenseStatus.has_license && !missingLicenseGateOpen) {
+    return null;
+  }
 
   const exp = licenseStatus.expires_at
     ? new Date(licenseStatus.expires_at).toLocaleDateString("pt-BR")
@@ -73,14 +97,9 @@ export function LicenseBlocker() {
         hours: 10,
         reason: "Pagar mais tarde (UI)",
       });
-
-      // melhor que reload, mas deixei o teu comportamento
       window.location.reload();
     } catch (err: any) {
-      alert(
-        err?.response?.data?.error ||
-          "Não foi possível liberar temporariamente."
-      );
+      alert(err?.response?.data?.error || "Não foi possível liberar temporariamente.");
     } finally {
       setLoadingGrace(false);
     }
@@ -90,23 +109,17 @@ export function LicenseBlocker() {
     <div className="fixed inset-0 z-[70] bg-slate-100/80 backdrop-blur-sm">
       <div className="flex h-full w-full items-center justify-center p-4">
         <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_20px_40px_-20px_rgba(2,6,23,0.25)]">
-          {/* Header */}
           <div className="flex items-start gap-3">
             <div className="rounded-xl bg-slate-100 p-2 text-slate-600">
               <FiLock className="h-5 w-5" />
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-slate-900">
-                {title}
-              </h2>
-              <p className="text-sm leading-relaxed text-slate-600">
-                {description}
-              </p>
+              <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+              <p className="text-sm leading-relaxed text-slate-600">{description}</p>
             </div>
           </div>
 
-          {/* Actions */}
           <div className="mt-5 flex flex-wrap gap-2">
             <button
               type="button"
@@ -139,7 +152,6 @@ export function LicenseBlocker() {
             )}
           </div>
 
-          {/* Info */}
           <div className="mt-4 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
             <FiAlertCircle className="mt-0.5 h-4 w-4 text-slate-500" />
             <p className="text-[12px] leading-relaxed text-slate-600">
