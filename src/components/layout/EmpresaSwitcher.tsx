@@ -81,14 +81,17 @@ export function EmpresaSwitcher() {
 
   // ✅ Recarrega dados do switcher sempre que empresaId mudar
   //    + anti-cache (pra não ficar preso no 304 / resposta velha)
+  //    + cancela requisições antigas (troca rápida de empresa)
   useEffect(() => {
-    let isMounted = true;
+    const controller = new AbortController();
+    let alive = true;
 
     async function loadEmpresas() {
       try {
         setLoading(true);
 
         const noCache = {
+          signal: controller.signal,
           headers: {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",
@@ -101,69 +104,79 @@ export function EmpresaSwitcher() {
           api.get<EmpresasUsuarioResponse>("/usuario/empresas", noCache),
         ]);
 
-        if (!isMounted) return;
+        if (!alive) return;
 
-        setEmpresaInfo(resEmpresa.data.empresaSettings ?? null);
-        setEmpresasUsuario(resEmpresas.data.empresas || []);
-      } catch (err) {
+        setEmpresaInfo(resEmpresa.data?.empresaSettings ?? null);
+        setEmpresasUsuario(resEmpresas.data?.empresas || []);
+      } catch (err: any) {
+        // ✅ se foi cancelado, ignora
+        if (err?.name === "CanceledError" || err?.code === "ERR_CANCELED") return;
+
         console.error("[EmpresaSwitcher] erro ao carregar empresas:", err);
       } finally {
-        if (isMounted) setLoading(false);
+        if (alive) setLoading(false);
       }
     }
 
-    loadEmpresas();
-    return () => {
-      isMounted = false;
-    };
-  }, [empresaId]);
+  loadEmpresas();
 
-    async function handleSwitchEmpresa(nextEmpresaId: string) {
-      if (switching) return;
+  return () => {
+    alive = false;
+    controller.abort(); // ✅ mata request pendente
+  };
+}, [empresaId]);
 
-      if (!nextEmpresaId || nextEmpresaId === currentEmpresaId) {
-        setOpen(false);
-        return;
-      }
 
-      try {
-        setSwitching(true);
-        setOpen(false);
-        setEmpresaInfo(null);
+  async function handleSwitchEmpresa(nextEmpresaId: string) {
+    if (switching) return;
 
-        const res = await api.post(
-          "/auth/switch-empresa",
-          {
-            empresaId: nextEmpresaId, // ✅ backend exige isso
+    if (!nextEmpresaId || nextEmpresaId === currentEmpresaId) {
+      setOpen(false);
+      return;
+    }
+
+    try {
+      setSwitching(true);
+      setOpen(false);
+      setEmpresaInfo(null);
+
+      const res = await api.post(
+        "/auth/switch-empresa",
+        { empresaId: nextEmpresaId },
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
           },
-          {
-            headers: {
-              "Cache-Control": "no-cache",
-              Pragma: "no-cache",
-            },
-            params: { _ts: Date.now() },
-          }
-        );
+          params: { _ts: Date.now() },
+        }
+      );
 
-        const newToken = res.data?.accessToken || res.data?.token;
-        if (!newToken) throw new Error("Token não retornado em /auth/switch-empresa");
+      const newToken = res.data?.accessToken || res.data?.token;
+      if (!newToken) throw new Error("Token não retornado em /auth/switch-empresa");
 
-        localStorage.setItem(ACCESS_TOKEN_KEY, newToken);
-        api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+      // ✅ salva token + empresa antes de recarregar
+      localStorage.setItem(ACCESS_TOKEN_KEY, newToken);
+      api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
 
-        localStorage.setItem(EMPRESA_ID_KEY, nextEmpresaId);
-        setEmpresaId(nextEmpresaId);
-      } catch (err: any) {
-        console.error("[EmpresaSwitcher] erro ao trocar empresa:", err);
-        alert(
-          err?.response?.data?.error ||
-            err?.message ||
-            "Erro ao trocar de empresa."
-        );
-      } finally {
-        setSwitching(false);
-      }
+      localStorage.setItem(EMPRESA_ID_KEY, nextEmpresaId);
+      setEmpresaId(nextEmpresaId);
+
+      // ✅ FDS: recarrega a página inteira (mantém a rota atual)
+      setTimeout(() => window.location.reload(), 50);
+
+    } catch (err: any) {
+      console.error("[EmpresaSwitcher] erro ao trocar empresa:", err);
+      alert(
+        err?.response?.data?.error ||
+          err?.message ||
+          "Erro ao trocar de empresa."
+      );
+    } finally {
+      setSwitching(false);
     }
+  }
+
 
 
   return (
