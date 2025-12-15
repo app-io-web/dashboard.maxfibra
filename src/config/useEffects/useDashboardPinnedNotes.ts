@@ -8,7 +8,9 @@ type UseDashboardPinnedNotesResult = {
   notesError: string | null;
 };
 
-export function useDashboardPinnedNotes(): UseDashboardPinnedNotesResult {
+export function useDashboardPinnedNotes(
+  empresaId: string | null
+): UseDashboardPinnedNotesResult {
   const [notes, setNotes] = useState<DashboardNote[]>([]);
   const [notesLoading, setNotesLoading] = useState(true);
   const [notesError, setNotesError] = useState<string | null>(null);
@@ -17,15 +19,35 @@ export function useDashboardPinnedNotes(): UseDashboardPinnedNotesResult {
     let isMounted = true;
 
     async function loadPinnedNotes() {
+      if (!empresaId) {
+        // sem empresa selecionada ainda
+        setNotes([]);
+        setNotesLoading(false);
+        setNotesError(null);
+        return;
+      }
+
       try {
-        const res = await api.get("/notes/dashboard");
-        const apiNotes: DashboardNote[] = res.data.notes || [];
+        setNotesLoading(true);
+        setNotesError(null);
+
+        const res = await api.get("/notes/dashboard", {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+          params: { _ts: Date.now() }, // cache-buster
+        });
+
+        const apiNotes: DashboardNote[] = res.data?.notes || [];
+
         if (isMounted) {
           setNotes(apiNotes);
         }
       } catch (err) {
         console.error("Erro ao carregar notas do dashboard:", err);
         if (isMounted) {
+          setNotes([]);
           setNotesError("Erro ao carregar notas destacadas.");
         }
       } finally {
@@ -40,7 +62,7 @@ export function useDashboardPinnedNotes(): UseDashboardPinnedNotesResult {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [empresaId]);
 
   return { notes, notesLoading, notesError };
 }

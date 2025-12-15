@@ -8,7 +8,9 @@ type UseDashboardShortcutsResult = {
   shortcutsError: string | null;
 };
 
-export function useDashboardShortcuts(): UseDashboardShortcutsResult {
+export function useDashboardShortcuts(
+  empresaId: string | null
+): UseDashboardShortcutsResult {
   const [shortcuts, setShortcuts] = useState<ApiShortcut[]>([]);
   const [shortcutsLoading, setShortcutsLoading] = useState(true);
   const [shortcutsError, setShortcutsError] = useState<string | null>(null);
@@ -17,13 +19,27 @@ export function useDashboardShortcuts(): UseDashboardShortcutsResult {
     let isMounted = true;
 
     async function loadDashboardShortcuts() {
+      if (!empresaId) {
+        setShortcuts([]);
+        setShortcutsLoading(false);
+        setShortcutsError(null);
+        return;
+      }
+
       try {
+        setShortcutsLoading(true);
+        setShortcutsError(null);
+
         const res = await api.get("/shortcuts", {
-          params: { onlyDashboard: true },
+          params: { onlyDashboard: true, _ts: Date.now() }, // cache-buster
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
         });
 
         const apiShortcuts: ApiShortcut[] =
-          res.data.shortcuts || res.data || [];
+          res.data?.shortcuts || res.data || [];
 
         if (isMounted) {
           setShortcuts(apiShortcuts);
@@ -31,6 +47,7 @@ export function useDashboardShortcuts(): UseDashboardShortcutsResult {
       } catch (err) {
         console.error("Erro ao carregar atalhos do dashboard:", err);
         if (isMounted) {
+          setShortcuts([]);
           setShortcutsError("Erro ao carregar atalhos.");
         }
       } finally {
@@ -45,7 +62,7 @@ export function useDashboardShortcuts(): UseDashboardShortcutsResult {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [empresaId]);
 
   return { shortcuts, shortcutsLoading, shortcutsError };
 }

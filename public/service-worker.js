@@ -1,7 +1,7 @@
 // public/service-worker.js
 
 // Versão do SW (muda isso quando fizer mudança grande no cache)
-const SW_VERSION = "central-admin-v4"; // <<-- bump pra forçar tudo a atualizar
+const SW_VERSION = "central-admin-v5"; // <<-- bump pra forçar tudo a atualizar
 const CACHE_NAME = `central-admin-cache-${SW_VERSION}`;
 
 console.log("[SW] Versão carregada:", SW_VERSION);

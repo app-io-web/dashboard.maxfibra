@@ -121,7 +121,9 @@ export function AppLayout() {
             <SmartOltAutomationPopup />
 
             {/* ✅ isso aqui é o pulo do gato */}
-            <Outlet key={empresaId || "no-empresa"} />
+            <div key={empresaId || "no-empresa"}>
+              <Outlet />
+            </div>
           </div>
         </main>
       </div>

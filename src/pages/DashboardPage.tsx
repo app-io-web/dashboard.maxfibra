@@ -104,14 +104,15 @@ export function DashboardPage() {
   } = useDashboardFlags();
 
   // NOTAS
-  const { notes, notesLoading, notesError } = useDashboardPinnedNotes();
+  const { notes, notesLoading, notesError } = useDashboardPinnedNotes(empresaId); // ✅
+
 
   // ATALHOS
   const { shortcuts, shortcutsLoading, shortcutsError } =
-    useDashboardShortcuts();
-
+    useDashboardShortcuts(empresaId);
   // ANIVERSARIANTES
-  const { birthdaysToday, birthdaysError } = useDashboardBirthdays();
+  const { birthdaysToday, birthdaysError } = useDashboardBirthdays(empresaId);
+
 
   // PERMISSÕES GLOBAIS (RBAC)
   const { can: canGlobal } = useGlobalSettingsPermissions();

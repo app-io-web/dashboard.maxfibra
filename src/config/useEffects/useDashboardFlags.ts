@@ -42,9 +42,9 @@ function getDefaults(): FlagsState {
 }
 
 export function useDashboardFlags(): UseDashboardFlagsResult {
-  const { empresaId } = useSession(); // 👈 CONTEXTO (troca empresa = refetch)
+  const { empresaId } = useSession();
   const [flags, setFlags] = useState<FlagsState>(() => getDefaults());
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const keys = useMemo<DashboardSystemSettingKey[]>(
@@ -58,25 +58,33 @@ export function useDashboardFlags(): UseDashboardFlagsResult {
   );
 
   const reload = useCallback(async () => {
-    let active = true;
+    // sem empresa? volta pro default
+    if (!empresaId) {
+      setFlags(getDefaults());
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    // AbortController pra cancelar chamadas se trocar empresa rápido
+    const controller = new AbortController();
 
     try {
       setLoading(true);
       setError(null);
 
-      // se não tem empresa selecionada, volta pro default e pronto
-      if (!empresaId) {
-        setFlags(getDefaults());
-        return;
-      }
-
       const results = await Promise.all(
         keys.map((key) =>
           api
-            .get<{ key: string; value: boolean | null }>(`/system-settings/${key}`)
+            .get<{ key: string; value: boolean | null }>(`/system-settings/${key}`, {
+              signal: controller.signal,
+              headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+              params: { _ts: Date.now() },
+            })
             .then((res) => res.data)
             .catch((err) => {
-              if (err?.response?.status !== 404) {
+              // 404 = setting não existe -> usa default
+              if (err?.response?.status !== 404 && err?.name !== "CanceledError") {
                 console.error("Erro ao carregar flag", key, err);
               }
               return { key, value: null };
@@ -90,8 +98,6 @@ export function useDashboardFlags(): UseDashboardFlagsResult {
         return getDashboardDefaultForKey(settingKey);
       };
 
-      if (!active) return;
-
       setFlags({
         showNotificationTestButton: resolveFlag(
           DASHBOARD_SYSTEM_SETTINGS.showNotificationTestButton.key
@@ -99,10 +105,15 @@ export function useDashboardFlags(): UseDashboardFlagsResult {
         showShortcutsSection: resolveFlag(
           DASHBOARD_SYSTEM_SETTINGS.showShortcutsSection.key
         ),
-        showNotesSection: resolveFlag(DASHBOARD_SYSTEM_SETTINGS.showNotesSection.key),
+        showNotesSection: resolveFlag(
+          DASHBOARD_SYSTEM_SETTINGS.showNotesSection.key
+        ),
         showBirthdayModal: resolveFlag(DASHBOARD_SYSTEM_SETTINGS.showBirthdayModal.key),
       });
-    } catch (err) {
+    } catch (err: any) {
+      // se foi cancelado, ignora
+      if (err?.name === "CanceledError") return;
+
       console.error("Erro ao carregar flags do dashboard:", err);
       setError("Erro ao carregar flags do dashboard.");
       setFlags(getDefaults());
@@ -110,77 +121,22 @@ export function useDashboardFlags(): UseDashboardFlagsResult {
       setLoading(false);
     }
 
-    return () => {
-      active = false;
-    };
+    // se quiser cancelar manualmente (raramente precisa), expõe controller.abort fora
   }, [empresaId, keys]);
 
-  // 👇 o ponto: mudou empresaId (contexto) -> recarrega flags
+  // mudou empresa -> recarrega flags
   useEffect(() => {
-    let isMounted = true;
+    let alive = true;
 
     (async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        if (!empresaId) {
-          if (isMounted) setFlags(getDefaults());
-          return;
-        }
-
-        const results = await Promise.all(
-          keys.map((key) =>
-            api
-              .get<{ key: string; value: boolean | null }>(`/system-settings/${key}`)
-              .then((res) => res.data)
-              .catch((err) => {
-                if (err?.response?.status !== 404) {
-                  console.error("Erro ao carregar flag", key, err);
-                }
-                return { key, value: null };
-              })
-          )
-        );
-
-        const resolveFlag = (settingKey: DashboardSystemSettingKey) => {
-          const found = results.find((r) => r.key === settingKey);
-          if (typeof found?.value === "boolean") return found.value;
-          return getDashboardDefaultForKey(settingKey);
-        };
-
-        if (!isMounted) return;
-
-        setFlags({
-          showNotificationTestButton: resolveFlag(
-            DASHBOARD_SYSTEM_SETTINGS.showNotificationTestButton.key
-          ),
-          showShortcutsSection: resolveFlag(
-            DASHBOARD_SYSTEM_SETTINGS.showShortcutsSection.key
-          ),
-          showNotesSection: resolveFlag(DASHBOARD_SYSTEM_SETTINGS.showNotesSection.key),
-          showBirthdayModal: resolveFlag(DASHBOARD_SYSTEM_SETTINGS.showBirthdayModal.key),
-        });
-      } catch (err) {
-        console.error("Erro ao carregar flags do dashboard:", err);
-        if (isMounted) {
-          setError("Erro ao carregar flags do dashboard.");
-          setFlags(getDefaults());
-        }
-      } finally {
-        if (isMounted) setLoading(false);
-      }
+      if (!alive) return;
+      await reload();
     })();
 
     return () => {
-      isMounted = false;
+      alive = false;
     };
-  }, [empresaId, keys]);
+  }, [reload]);
 
-  return {
-    ...flags,
-    loading,
-    error,
-    reload,
-  };
+  return { ...flags, loading, error, reload };
 }

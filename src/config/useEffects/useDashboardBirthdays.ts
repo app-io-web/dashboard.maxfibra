@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../lib/api";
 import {
   filterBirthdaysToday,
@@ -24,7 +24,9 @@ type UseDashboardBirthdaysResult = {
   birthdaysError: string | null;
 };
 
-export function useDashboardBirthdays(): UseDashboardBirthdaysResult {
+export function useDashboardBirthdays(
+  empresaId: string | null
+): UseDashboardBirthdaysResult {
   const [birthdays, setBirthdays] = useState<BirthdayAlertItem[]>([]);
   const [birthdaysLoading, setBirthdaysLoading] = useState(true);
   const [birthdaysError, setBirthdaysError] = useState<string | null>(null);
@@ -33,15 +35,29 @@ export function useDashboardBirthdays(): UseDashboardBirthdaysResult {
     let isMounted = true;
 
     async function loadBirthdays() {
+      if (!empresaId) {
+        setBirthdays([]);
+        setBirthdaysLoading(false);
+        setBirthdaysError(null);
+        return;
+      }
+
       try {
         setBirthdaysLoading(true);
         setBirthdaysError(null);
 
-        const res = await api.get("/aniversariantes");
+        const res = await api.get("/aniversariantes", {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+          params: { _ts: Date.now() }, // cache-buster
+        });
+
         const data = res.data;
 
         const apiBirthdays: ApiBirthday[] =
-          data.birthdays || data.aniversariantes || data || [];
+          data?.birthdays || data?.aniversariantes || data || [];
 
         const mapped: BirthdayAlertItem[] = apiBirthdays.map((b, index) => ({
           id: b.auth_user_id || String(index),
@@ -52,18 +68,15 @@ export function useDashboardBirthdays(): UseDashboardBirthdaysResult {
           avatarUrl: b.avatar_url ?? null,
         }));
 
-        if (isMounted) {
-          setBirthdays(mapped);
-        }
+        if (isMounted) setBirthdays(mapped);
       } catch (err) {
         console.error("Erro ao carregar aniversariantes:", err);
         if (isMounted) {
+          setBirthdays([]);
           setBirthdaysError("Erro ao carregar aniversariantes de hoje.");
         }
       } finally {
-        if (isMounted) {
-          setBirthdaysLoading(false);
-        }
+        if (isMounted) setBirthdaysLoading(false);
       }
     }
 
@@ -72,9 +85,12 @@ export function useDashboardBirthdays(): UseDashboardBirthdaysResult {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [empresaId]);
 
-  const birthdaysToday = filterBirthdaysToday(birthdays);
+  const birthdaysToday = useMemo(
+    () => filterBirthdaysToday(birthdays),
+    [birthdays]
+  );
 
   return { birthdays, birthdaysToday, birthdaysLoading, birthdaysError };
 }
