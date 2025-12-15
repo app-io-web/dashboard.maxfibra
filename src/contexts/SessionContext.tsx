@@ -93,7 +93,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   // ✅ LICENÇA
   const [licenseStatus, setLicenseStatus] = useState<LicenseStatus | null>(null);
-  const [licenseLoading, setLicenseLoading] = useState(false);
+  const [licenseLoading, setLicenseLoading] = useState(true);
+
 
   // ✅ bypass (dev)
   const [licenseBypass, setLicenseBypass] = useState(false);
@@ -217,8 +218,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const refreshLicenseStatus = useCallback(async () => {
     if (!empresaId) {
       setLicenseStatus(null);
+      setLicenseLoading(true); // ✅ impede modal ansioso
       return null;
     }
+
 
     try {
       setLicenseLoading(true);
@@ -254,19 +257,23 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   // ✅ 2) mudou empresa -> refaz branding + permissões + licença
   useEffect(() => {
     refreshBranding();
-    refreshPermissions();
     refreshLicenseStatus();
-  }, [empresaId, refreshBranding, refreshPermissions, refreshLicenseStatus]);
+  }, [empresaId, refreshBranding, refreshLicenseStatus]);
 
-  const licenseBlocked = useMemo(() => {
-    // se ainda nem carregou (null), não bloqueia de cara
-    if (!licenseStatus) return false;
 
-    // ✅ se você é "dev/dono", não bloqueia nunca (não mostra o modal/overlay)
-    if (licenseBypass) return false;
+    const licenseBlocked = useMemo(() => {
+      // ✅ enquanto carrega, nunca bloqueia
+      if (licenseLoading) return false;
 
-    return !licenseStatus.is_valid_now;
-  }, [licenseStatus, licenseBypass]);
+      // ✅ sem resposta ainda, não bloqueia
+      if (!licenseStatus) return false;
+
+      // ✅ bypass (dev/dono)
+      if (licenseBypass) return false;
+
+      return !licenseStatus.is_valid_now;
+    }, [licenseStatus, licenseBypass, licenseLoading]);
+
 
   const value = useMemo<SessionState>(
     () => ({

@@ -13,7 +13,13 @@ import {
 const ALLOW_PATH_PREFIXES = ["/system/licenses"];
 
 export function LicenseBlocker() {
-  const { licenseBlocked, licenseStatus } = useSession();
+  const {
+    licenseBlocked,
+    licenseStatus,
+    licenseLoading,
+    empresaId,
+  } = useSession();
+
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [loadingGrace, setLoadingGrace] = useState(false);
@@ -22,38 +28,43 @@ export function LicenseBlocker() {
     return ALLOW_PATH_PREFIXES.some((p) => pathname.startsWith(p));
   }, [pathname]);
 
+  // 🛑 PORTEIRO MORAL DO COMPONENTE
+  // enquanto login / empresa / licença não estiverem prontos → não renderiza NADA
+  if (!empresaId || licenseLoading || !licenseStatus) {
+    return null;
+  }
+
+  // se não estiver bloqueado ou se estiver em rota permitida → nada
   if (!licenseBlocked || allowed) return null;
 
-  const exp = licenseStatus?.expires_at
+  const exp = licenseStatus.expires_at
     ? new Date(licenseStatus.expires_at).toLocaleDateString("pt-BR")
     : null;
 
-  const graceUntil = licenseStatus?.grace_until
+  const graceUntil = licenseStatus.grace_until
     ? new Date(licenseStatus.grace_until).toLocaleString("pt-BR")
     : null;
 
-  const title = licenseStatus?.is_grace_active
+  const title = licenseStatus.is_grace_active
     ? "Liberação temporária ativa"
-    : !licenseStatus?.has_license
+    : !licenseStatus.has_license
     ? "Licença não encontrada"
-    : licenseStatus?.is_paid
+    : licenseStatus.is_paid
     ? "Licença expirada"
     : "Pagamento pendente";
 
-  const description = licenseStatus?.is_grace_active
+  const description = licenseStatus.is_grace_active
     ? `O sistema está liberado temporariamente até ${graceUntil}. Após esse período, o acesso será bloqueado novamente.`
-    : !licenseStatus?.has_license
+    : !licenseStatus.has_license
     ? "Esta empresa não possui uma licença ativa vinculada. Para liberar o acesso ao sistema, é necessário atribuir ou renovar uma licença."
-    : licenseStatus?.is_paid
+    : licenseStatus.is_paid
     ? `A licença desta empresa expirou${exp ? ` em ${exp}` : ""}. Para continuar utilizando o sistema, realize a renovação.`
     : "Uma licença foi criada, porém o pagamento ainda não foi confirmado. Após a validação, o acesso será liberado automaticamente.";
 
-  // ✅ botão só aparece UMA vez
-    const canUseGrace =
-    !licenseStatus?.is_valid_now &&
-    !licenseStatus?.is_grace_active &&
-    !licenseStatus?.grace_used_once;
-
+  const canUseGrace =
+    !licenseStatus.is_valid_now &&
+    !licenseStatus.is_grace_active &&
+    !licenseStatus.grace_used_once;
 
   async function handleGrace() {
     try {
@@ -62,6 +73,8 @@ export function LicenseBlocker() {
         hours: 10,
         reason: "Pagar mais tarde (UI)",
       });
+
+      // melhor que reload, mas deixei o teu comportamento
       window.location.reload();
     } catch (err: any) {
       alert(
@@ -130,7 +143,7 @@ export function LicenseBlocker() {
           <div className="mt-4 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
             <FiAlertCircle className="mt-0.5 h-4 w-4 text-slate-500" />
             <p className="text-[12px] leading-relaxed text-slate-600">
-              {licenseStatus?.is_grace_active
+              {licenseStatus.is_grace_active
                 ? "Esta liberação é única e não poderá ser solicitada novamente."
                 : "O acesso ao sistema está temporariamente restrito até que a situação da licença seja regularizada."}
             </p>
