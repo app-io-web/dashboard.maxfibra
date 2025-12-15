@@ -6,6 +6,9 @@ import { Topbar } from "./Topbar";
 import { NewFichaPopup } from "../notifications/NewFichaPopup";
 import { SmartOltAutomationPopup } from "../notifications/SmartOltAutomationPopup";
 import { useSession } from "../../contexts/SessionContext";
+import { LicenseBlocker } from "../license/LicenseBlocker";
+import { InvoiceReminderModal } from "../license/InvoiceReminderModal";
+import { GraceNoticeToast } from "../license/GraceNoticeToast";
 
 const POST_LOGIN_REFRESH_KEY = "mx_post_login_refresh_v1";
 
@@ -95,6 +98,10 @@ export function AppLayout() {
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
         />
+          <LicenseBlocker />
+          <InvoiceReminderModal />
+
+            <GraceNoticeToast />
 
         <main className="flex-1 p-4 md:p-6">
           <div className="max-w-6xl mx-auto">

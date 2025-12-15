@@ -6,6 +6,7 @@ import { UserPermissionToolsSection } from "../components/system-config/UserPerm
 import { MonitoringSmartOltSection } from "../components/system-config/MonitoringSmartOltSection";
 import { UserPermissionRbacSection } from "../components/system-config/UserPermissionRbacSection";
 import { SystemPermissionProfilesSection } from "../components/system-config/SystemPermissionProfilesSection";
+import { SystemLicensesSection } from "../components/system-config/SystemLicensesSection";
 
 import {
   Cog,
@@ -15,6 +16,7 @@ import {
   Activity,
   ShieldCheck,
   Users,
+  Ticket,
 } from "lucide-react";
 
 type SystemSettingsTab = "dashboard" | "tools" | "monitoring";
@@ -22,7 +24,8 @@ type ToolsSubTab =
   | "tools-main"
   | "user-permissions"
   | "user-permissions-rbac"
-  | "permission-profiles";
+  | "permission-profiles"
+  | "licenses" ;
 
 export function SystemSettingsPage() {
   const [activeTab, setActiveTab] = useState<SystemSettingsTab>("dashboard");
@@ -165,6 +168,21 @@ export function SystemSettingsPage() {
                   <Users className="h-3 w-3" />
                   Perfis de permissão
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveToolsSubTab("licenses")}
+                  className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition
+                    ${
+                      activeToolsSubTab === "licenses"
+                        ? "bg-slate-900 text-white shadow-sm"
+                        : "text-slate-700 hover:text-slate-900 hover:bg-slate-200"
+                    }`}
+                >
+                  <Ticket className="h-3 w-3" />
+                  Licenças
+                </button>
+
               </div>
             </div>
 
@@ -182,6 +200,9 @@ export function SystemSettingsPage() {
             {activeToolsSubTab === "permission-profiles" && (
               <SystemPermissionProfilesSection />
             )}
+
+            {activeToolsSubTab === "licenses" && <SystemLicensesSection />}
+
           </>
         )}
 

@@ -61,17 +61,17 @@ export function SmartOltAutomationPopup() {
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) {
-      console.log("[SmartOltPopup] Service Worker não suportado.");
+      //console.log("[SmartOltPopup] Service Worker não suportado.");
       return;
     }
 
     const handler = (event: MessageEvent) => {
-      console.log("[SmartOltPopup] Mensagem recebida do SW:", event.data);
+      //console.log("[SmartOltPopup] Mensagem recebida do SW:", event.data);
 
       const raw: SmartOltMessageData = (event.data as any) || {};
 
       if (raw?.source !== "web-push") {
-        console.log("[SmartOltPopup] Ignorando mensagem (source != web-push)");
+        //console.log("[SmartOltPopup] Ignorando mensagem (source != web-push)");
         return;
       }
 
@@ -79,8 +79,8 @@ export function SmartOltAutomationPopup() {
       const payload: SmartOltPayload =
         raw?.data?.payload || raw?.payload || {};
 
-      console.log("[SmartOltPopup] Tipo da notificação:", type);
-      console.log("[SmartOltPopup] Payload recebido:", payload);
+      //console.log("[SmartOltPopup] Tipo da notificação:", type);
+      //console.log("[SmartOltPopup] Payload recebido:", payload);
 
       // 👇 se NÃO existir nenhuma permissão global cadastrada ainda,
       // a gente libera geral (fallback de desenvolvimento)
@@ -89,10 +89,10 @@ export function SmartOltAutomationPopup() {
       if (type === "smart_olt_onu_finished") {
         const allowed = hasGlobalConfig ? canGlobal("notify_power_off") : true;
 
-        console.log("[SmartOltPopup] Check notify_power_off =>", {
-          hasGlobalConfig,
-          allowed,
-        });
+        //console.log("[SmartOltPopup] Check notify_power_off =>", {
+          //hasGlobalConfig,
+          //allowed,
+        //});
 
         if (!allowed) {
           console.log(
@@ -122,10 +122,10 @@ export function SmartOltAutomationPopup() {
       if (type === "smart_olt_los_finished") {
         const allowed = hasGlobalConfig ? canGlobal("notify_los") : true;
 
-        console.log("[SmartOltPopup] Check notify_los =>", {
-          hasGlobalConfig,
-          allowed,
-        });
+        //console.log("[SmartOltPopup] Check notify_los =>", {
+          //hasGlobalConfig,
+          //allowed,
+       // });
 
         if (!allowed) {
           console.log(
@@ -158,11 +158,11 @@ export function SmartOltAutomationPopup() {
       );
     };
 
-    console.log("[SmartOltPopup] Registrando listener de message do SW");
+    //console.log("[SmartOltPopup] Registrando listener de message do SW");
     navigator.serviceWorker.addEventListener("message", handler);
 
     return () => {
-      console.log("[SmartOltPopup] Removendo listener de message do SW");
+      //console.log("[SmartOltPopup] Removendo listener de message do SW");
       navigator.serviceWorker.removeEventListener("message", handler);
     };
   }, [playOnuOffSound, playLosSound, canGlobal, keys]);

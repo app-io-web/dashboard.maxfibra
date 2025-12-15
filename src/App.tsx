@@ -22,6 +22,7 @@ import { SupportTicketPage } from "./pages/SupportTicketPage";
 import { ClienteFichaDetailPage } from "./pages/internal-services/ClienteFichaDetailPage";
 import { DuvidasFrequentesEditPage } from "./pages/DuvidasFrequentesEditPage";
 import { SmartOltIxcReportPage } from "./pages/SmartOltIxcReportPage";
+import { LicensePage } from "./pages/system/LicensePage";
 
 
 type PropsWithChildren = {
@@ -102,6 +103,9 @@ export default function App() {
             path="/monitoramento/smart-olt-relatorio"
             element={<SmartOltIxcReportPage />}
           />
+
+        <Route path="/system/licenses" element={<LicensePage />} />
+
 
 
 

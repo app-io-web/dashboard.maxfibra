@@ -34,35 +34,35 @@ export function NewFichaPopup() {
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) {
-      console.log("[NewFichaPopup] Service Worker não suportado.");
+      //console.log("[NewFichaPopup] Service Worker não suportado.");
       return;
     }
 
     const handler = (event: MessageEvent) => {
-      console.log("[NewFichaPopup] Mensagem recebida do SW:", event.data);
+      //console.log("[NewFichaPopup] Mensagem recebida do SW:", event.data);
 
       const data: any = event.data || {};
 
       if (data?.source !== "web-push") {
-        console.log("[NewFichaPopup] Ignorando mensagem (source != web-push)");
+        //console.log("[NewFichaPopup] Ignorando mensagem (source != web-push)");
         return;
       }
 
       const type = data?.data?.type || data?.type;
-      console.log("[NewFichaPopup] Tipo da notificação:", type);
+      //console.log("[NewFichaPopup] Tipo da notificação:", type);
 
       if (type !== "cadastro_ficha") {
-        console.log(
-          "[NewFichaPopup] Ignorando mensagem (type != cadastro_ficha)"
-        );
+        //console.log(
+          //"[NewFichaPopup] Ignorando mensagem (type != cadastro_ficha)"
+        //);
         return;
       }
 
       // ✅ USA A ACTION, NÃO A KEY CRUA
       if (!canGlobal("notify_new_register")) {
-        console.log(
-          "[NewFichaPopup] Usuário sem permissão notify_new_register, ignorando popup."
-        );
+        //console.log(
+          //"[NewFichaPopup] Usuário sem permissão notify_new_register, ignorando popup."
+       // );
         return;
       }
 
@@ -86,7 +86,7 @@ export function NewFichaPopup() {
         nome: data.data?.nome,
       };
 
-      console.log("[NewFichaPopup] Payload da ficha recebido no popup:", payload);
+      //console.log("[NewFichaPopup] Payload da ficha recebido no popup:", payload);
 
       setPopup({
         open: true,
@@ -98,11 +98,11 @@ export function NewFichaPopup() {
       playFichaSound();
     };
 
-    console.log("[NewFichaPopup] Registrando listener de message do SW");
+    //console.log("[NewFichaPopup] Registrando listener de message do SW");
     navigator.serviceWorker.addEventListener("message", handler);
 
     return () => {
-      console.log("[NewFichaPopup] Removendo listener de message do SW");
+      //console.log("[NewFichaPopup] Removendo listener de message do SW");
       navigator.serviceWorker.removeEventListener("message", handler);
     };
   }, [playFichaSound, canGlobal]); // pode recompor, sem problema
@@ -129,10 +129,10 @@ export function NewFichaPopup() {
       dest = payload.url;
 
       if (/^https?:\/\//i.test(dest)) {
-        console.log(
-          "[NewFichaPopup] Navegando (full) para URL absoluta da ficha:",
+        //console.log(
+        //  "[NewFichaPopup] Navegando (full) para URL absoluta da ficha:",
           dest
-        );
+       // );
         setPopup((prev) => (prev ? { ...prev, open: false } : prev));
         window.location.href = dest;
         return;
@@ -147,7 +147,7 @@ export function NewFichaPopup() {
       dest = "/cadastro-fichas";
     }
 
-    console.log("[NewFichaPopup] Navegando via React Router para:", dest);
+    //console.log("[NewFichaPopup] Navegando via React Router para:", dest);
 
     setPopup((prev) => (prev ? { ...prev, open: false } : prev));
     navigate(dest);

@@ -5,7 +5,7 @@ type EmpresaListItem = {
   id: string;
   display_name: string | null;
   auth_empresa_id: string;
-  logo_url?: string | null; // 🔥 pega logo da empresa
+  logo_url?: string | null;
   role?: string;
 };
 
@@ -16,7 +16,6 @@ type Props = {
   canViewUseEmpresa?: boolean;  // viewer
 };
 
-// mesmo helper que usamos nos outros lugares
 function buildLogoUrl(raw?: string | null): string {
   if (!raw) return "";
   if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
@@ -44,6 +43,7 @@ export function EmpresasUsuarioList({
       <div className="space-y-2">
         {empresas.map((e) => {
           const logoUrl = buildLogoUrl(e.logo_url);
+          const nome = e.display_name || "Empresa sem nome";
 
           return (
             <div
@@ -55,27 +55,27 @@ export function EmpresasUsuarioList({
                   {logoUrl ? (
                     <img
                       src={logoUrl}
-                      alt={e.display_name || "Logo da empresa"}
+                      alt={nome}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <span className="text-[#034078] text-sm font-semibold">
-                      {e.display_name?.[0]?.toUpperCase() || "E"}
+                      {nome[0]?.toUpperCase() || "E"}
                     </span>
                   )}
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-slate-900">
-                      {e.display_name || "Empresa sem nome"}
-                    </p>
+                    <p className="text-sm font-medium text-slate-900">{nome}</p>
+
                     {e.role && (
                       <span className="inline-flex items-center rounded-full bg-slate-100 text-slate-700 px-2 py-[1px] text-[10px] font-semibold uppercase tracking-wide">
                         {e.role}
                       </span>
                     )}
                   </div>
+
                   <p className="text-[11px] text-slate-500 font-mono">
                     {e.auth_empresa_id}
                   </p>
@@ -84,11 +84,15 @@ export function EmpresasUsuarioList({
 
               {canViewUseEmpresa && (
                 <button
-                  onClick={() =>
-                    canUseEmpresa && onSwitchEmpresa(e.auth_empresa_id)
-                  }
+                  type="button"
+                  onClick={() => {
+                    if (!canUseEmpresa) return;
+                    console.log("[EmpresasUsuarioList] switch para:", e.auth_empresa_id);
+                    onSwitchEmpresa(e.auth_empresa_id);
+                  }}
                   disabled={!canUseEmpresa}
                   className="rounded-lg bg-[#1282A2] text-white text-xs font-semibold px-3 py-1.5 hover:bg-[#034078] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={!canUseEmpresa ? "Você não tem permissão para trocar de empresa" : "Trocar para esta empresa"}
                 >
                   Usar esta empresa
                 </button>

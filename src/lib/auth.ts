@@ -1,25 +1,18 @@
 // src/lib/auth.ts
-import { api } from "./api";
-
-const ACCESS_TOKEN_KEY = "central_access_token";
-const USER_KEY = "central_user";
+import { api, ACCESS_TOKEN_KEY, USER_KEY, EMPRESA_ID_KEY } from "./api";
 
 export type AuthUser = {
   id: string;
   name: string;
   email: string;
 
-  // payload extra que o backend já manda
   isCentralAdmin?: boolean;
   empresaId?: string | null;
   empresaRole?: string | null;
   empresaName?: string | null;
 
-  // vem do backend já com a regra (OWNER + Desenvolvedor, etc.)
   can_manage_system_config?: boolean;
-
-  // 🔑 **principal pra Serviços Internos**
-  permissions?: string[]; // <- AQUI
+  permissions?: string[];
 };
 
 export type LoginResponse = {
@@ -48,19 +41,26 @@ export function isAuthenticated(): boolean {
   return !!getAccessToken();
 }
 
-export async function login(
-  email: string,
-  password: string
-): Promise<LoginResponse> {
+export async function login(email: string, password: string): Promise<LoginResponse> {
   const res = await api.post<LoginResponse>("/login", { email, password });
-
   const { user, accessToken } = res.data;
 
   if (typeof window !== "undefined") {
+    // ✅ salva token
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+
+    // ✅ salva user
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+
+    // ✅ salva empresa atual (pra não depender de timing do SessionContext)
+    if (user?.empresaId) {
+      localStorage.setItem(EMPRESA_ID_KEY, String(user.empresaId));
+    } else {
+      localStorage.removeItem(EMPRESA_ID_KEY);
+    }
   }
 
+  // ok manter, mas o interceptor já garante
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   return { user, accessToken };
@@ -70,6 +70,7 @@ export function logout() {
   if (typeof window !== "undefined") {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(EMPRESA_ID_KEY);
   }
   delete api.defaults.headers.common["Authorization"];
 }

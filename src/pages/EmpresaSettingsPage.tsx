@@ -1,7 +1,7 @@
 // src/pages/EmpresaSettingsPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, ACCESS_TOKEN_KEY } from "../lib/api";
+import { api, ACCESS_TOKEN_KEY, EMPRESA_ID_KEY } from "../lib/api";
 
 import { EmpresaUsers } from "../components/empresa/EmpresaUsers";
 import {
@@ -23,25 +23,51 @@ import {
   type GlobalSettingsActionId,
 } from "../config/globalSettingsPermissions";
 
+import { useSession } from "../contexts/SessionContext";
+
+
 type EmpresaSettingsResponse = {
   empresaSettings: EmpresaSettings | null;
-  permission_keys?: string[];        // perms da área Empresa Settings
-  global_permission_keys?: string[]; // perms da área Global Settings
+  permission_keys?: string[];
+  global_permission_keys?: string[];
 };
 
 type EmpresaWithRole = EmpresaSettings & { role?: string; is_enabled?: boolean };
 type EmpresasUsuarioResponse = { empresas: EmpresaWithRole[] };
 
+// helper para montar a URL absoluta da logo
+function buildLogoUrl(raw?: string | null): string {
+  if (!raw) return "";
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+
+  const base = api.defaults.baseURL || "";
+  return base.replace(/\/$/, "") + (raw.startsWith("/") ? raw : `/${raw}`);
+}
+
+// troca o favicon dinamicamente
+function updateFavicon(url: string) {
+  let link = document.querySelector("link[rel='icon']") as HTMLLinkElement | null;
+
+  if (!link) {
+    link = document.createElement("link");
+    link.setAttribute("rel", "icon");
+    document.head.appendChild(link);
+  }
+
+  link.setAttribute("href", url);
+}
+
 export function EmpresaSettingsPage() {
+  const { setEmpresaId } = useSession();
   const [empresa, setEmpresa] = useState<EmpresaSettings | null>(null);
   const [empresasUsuario, setEmpresasUsuario] = useState<EmpresaWithRole[]>([]);
   const [currentRole, setCurrentRole] = useState<string | null>(null);
   const [permissionKeys, setPermissionKeys] = useState<string[]>([]);
 
-  // 👇 null = backend não mandou nada (feature desligada)
-  const [globalPermissionKeys, setGlobalPermissionKeys] = useState<
-    string[] | null
-  >(null);
+  // null = backend não mandou nada (feature desligada)
+  const [globalPermissionKeys, setGlobalPermissionKeys] = useState<string[] | null>(
+    null
+  );
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +80,15 @@ export function EmpresaSettingsPage() {
 
   const navigate = useNavigate();
 
+  // ✅ anti-cache padrão pra endpoints que mudam por empresa/token
+  const noCache = {
+    headers: {
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    },
+    params: { _ts: Date.now() }, // cache-buster
+  } as const;
+
   useEffect(() => {
     let isMounted = true;
 
@@ -63,17 +98,16 @@ export function EmpresaSettingsPage() {
 
       try {
         const [resEmpresaAtual, resEmpresasUsuario] = await Promise.all([
-          api.get<EmpresaSettingsResponse>("/empresa/settings"),
-          api.get<EmpresasUsuarioResponse>("/usuario/empresas"),
+          api.get<EmpresaSettingsResponse>("/empresa/settings", noCache),
+          api.get<EmpresasUsuarioResponse>("/usuario/empresas", noCache),
         ]);
 
         if (!isMounted) return;
 
         const empresaAtual = resEmpresaAtual.data.empresaSettings;
+
         if (!empresaAtual) {
-          setError(
-            "Nenhuma configuração de empresa encontrada para este usuário."
-          );
+          setError("Nenhuma configuração de empresa encontrada para este usuário.");
           setEmpresa(null);
         } else {
           setEmpresa(empresaAtual);
@@ -81,41 +115,29 @@ export function EmpresaSettingsPage() {
 
         setPermissionKeys(resEmpresaAtual.data.permission_keys || []);
 
-        // 👇 se o backend mandou o campo, usamos; se nem existir, deixamos null
         if (
           Object.prototype.hasOwnProperty.call(
             resEmpresaAtual.data,
             "global_permission_keys"
           )
         ) {
-          setGlobalPermissionKeys(
-            resEmpresaAtual.data.global_permission_keys || []
-          );
+          setGlobalPermissionKeys(resEmpresaAtual.data.global_permission_keys || []);
         } else {
           setGlobalPermissionKeys(null);
         }
-
-        // 👉 ajuda pra debugar, pode deixar um tempo
-        console.log(
-          "[EMPRESA SETTINGS] global_permission_keys ->",
-          resEmpresaAtual.data.global_permission_keys
-        );
 
         const lista = resEmpresasUsuario.data.empresas || [];
         setEmpresasUsuario(lista);
 
         const roleAtual =
-          lista.find(
-            (e) => e.auth_empresa_id === empresaAtual?.auth_empresa_id
-          )?.role || null;
+          lista.find((e) => e.auth_empresa_id === empresaAtual?.auth_empresa_id)
+            ?.role || null;
+
         setCurrentRole(roleAtual);
       } catch (err: any) {
         console.error(err);
         if (!isMounted) return;
-        setError(
-          err?.response?.data?.error ||
-            "Erro ao carregar informações da empresa."
-        );
+        setError(err?.response?.data?.error || "Erro ao carregar informações da empresa.");
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -125,9 +147,10 @@ export function EmpresaSettingsPage() {
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 🔥 título dinâmico da aba com base na empresa atual
+  // título dinâmico da aba com base na empresa atual
   useEffect(() => {
     if (empresa?.display_name) {
       document.title = `${empresa.display_name} • Central Admin`;
@@ -136,40 +159,15 @@ export function EmpresaSettingsPage() {
     }
   }, [empresa]);
 
-
-  // helper para montar a URL absoluta da logo
-function buildLogoUrl(raw?: string | null): string {
-  if (!raw) return "";
-  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
-
-  const base = api.defaults.baseURL || "";
-  return base.replace(/\/$/, "") + (raw.startsWith("/") ? raw : `/${raw}`);
-}
-
-// troca o favicon dinamicamente
-function updateFavicon(url: string) {
-  let link = document.querySelector("link[rel='icon']");
-
-  if (!link) {
-    link = document.createElement("link");
-    link.setAttribute("rel", "icon");
-    document.head.appendChild(link);
-  }
-
-  link.setAttribute("href", url);
-}
-
-// efeito para atualizar o favicon
-useEffect(() => {
-  if (empresa?.logo_url) {
-    const finalUrl = buildLogoUrl(empresa.logo_url);
-    updateFavicon(finalUrl);
-  } else {
-    // fallback padrão (se quiser colocar algo)
-    updateFavicon("/vite.svg");
-  }
-}, [empresa]);
-
+  // favicon dinâmico
+  useEffect(() => {
+    if (empresa?.logo_url) {
+      const finalUrl = buildLogoUrl(empresa.logo_url);
+      updateFavicon(finalUrl);
+    } else {
+      updateFavicon("/vite.svg");
+    }
+  }, [empresa]);
 
   const handleSavedEmpresa = (updated: EmpresaSettings) => {
     setEmpresa(updated);
@@ -188,20 +186,21 @@ useEffect(() => {
     }
     setCreating(true);
     setCreateError(null);
+
     try {
       const res = await api.post<{ empresaSettings: EmpresaSettings }>(
         "/empresas",
-        {
-          display_name: newEmpresaName.trim(),
-        }
+        { display_name: newEmpresaName.trim() },
+        noCache
       );
+
       const created = res.data.empresaSettings;
       setEmpresa(created);
       setError(null);
 
-      const listRes =
-        await api.get<EmpresasUsuarioResponse>("/usuario/empresas");
+      const listRes = await api.get<EmpresasUsuarioResponse>("/usuario/empresas", noCache);
       setEmpresasUsuario(listRes.data.empresas || []);
+
       setCreateModalOpen(false);
       setNewEmpresaName("");
     } catch (err: any) {
@@ -211,21 +210,51 @@ useEffect(() => {
     }
   }
 
-  async function handleSwitchEmpresa(authEmpresaId: string) {
-    try {
-      const res = await api.post("/auth/switch-empresa", {
-        empresaId: authEmpresaId,
-      });
-      const newToken = res.data.accessToken;
-      if (newToken) {
+    async function handleSwitchEmpresa(nextEmpresaId: string) {
+      if (!nextEmpresaId) return;
+      if (nextEmpresaId === empresa?.auth_empresa_id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await api.post(
+          "/auth/switch-empresa",
+          { empresaId: nextEmpresaId },
+          { headers: { "Cache-Control": "no-cache", Pragma: "no-cache" }, params: { _ts: Date.now() } }
+        );
+
+        const newToken = res.data?.accessToken;
+        if (!newToken) throw new Error("Token não retornado em /auth/switch-empresa");
+
         localStorage.setItem(ACCESS_TOKEN_KEY, newToken);
-        api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+        localStorage.setItem(EMPRESA_ID_KEY, nextEmpresaId);
+        api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+        (api.defaults.headers.common as any)["x-empresa-id"] = nextEmpresaId;
+
+        // ✅ isso aqui faz o sidebar e o resto do app mudarem SEM CTRL-R
+        setEmpresaId(nextEmpresaId);
+
+        // (opcional) aqui tu pode manter teu refetch local pra atualizar a tela atual
+        const [resEmpresaAtual, resEmpresasUsuario] = await Promise.all([
+          api.get<EmpresaSettingsResponse>("/empresa/settings", noCache),
+          api.get<EmpresasUsuarioResponse>("/usuario/empresas", noCache),
+        ]);
+
+        const empresaAtual = resEmpresaAtual.data.empresaSettings;
+        setEmpresa(empresaAtual ?? null);
+        setPermissionKeys(resEmpresaAtual.data.permission_keys || []);
+        // ... resto igual
+      } catch (err: any) {
+        console.error("[EmpresaSettingsPage] erro ao trocar empresa:", err);
+        setError(err?.response?.data?.error || err?.message || "Erro ao trocar empresa.");
+      } finally {
+        setLoading(false);
       }
-      window.location.reload();
-    } catch (err: any) {
-      alert(err?.response?.data?.error || "Erro ao trocar de empresa.");
     }
-  }
+
+
+
 
   const outrasEmpresas = empresasUsuario.filter(
     (e) => e.auth_empresa_id !== empresa?.auth_empresa_id
@@ -241,34 +270,23 @@ useEffect(() => {
   const canGlobal = (action: GlobalSettingsActionId) =>
     canAccessGlobalSettings(globalPermissionKeys || [], action);
 
-  // WRITE (ações que realmente alteram estado)
+  // WRITE
   const canCreateEmpresa = can("create_empresa");
   const canEditDados = can("edit_empresa_dados");
   const canEditUsuarios = can("edit_empresa_usuarios");
   const canUsarEmpresa = can("usar_empresa");
   const canVincularOutros = can("vincular_outros");
 
-  // 🔥 Gerenciar usuários: WRITE = interação, VIEW = só ver tela/botão
+  // VIEW (VIEW || WRITE)
   const canManageUsersWrite = can("gerenciar_usuarios");
-  const canManageUsersView =
-    can("gerenciar_usuarios_view") || canManageUsersWrite;
+  const canManageUsersView = can("gerenciar_usuarios_view") || canManageUsersWrite;
 
-  // VIEW (VIEW || WRITE) -> quem pode criar/editar também enxerga
-  const canViewCreateEmpresa =
-    can("create_empresa_view") || canCreateEmpresa;
-  const canViewEditDados =
-    can("edit_empresa_dados_view") || canEditDados;
-  const canViewEditUsuarios =
-    can("edit_empresa_usuarios_view") || canEditUsuarios;
+  const canViewCreateEmpresa = can("create_empresa_view") || canCreateEmpresa;
+  const canViewEditDados = can("edit_empresa_dados_view") || canEditDados;
+  const canViewEditUsuarios = can("edit_empresa_usuarios_view") || canEditUsuarios;
   const canViewUsarEmpresa = can("usar_empresa_view") || canUsarEmpresa;
-  const canViewVincularOutros =
-    can("vincular_outros_view") || canVincularOutros;
+  const canViewVincularOutros = can("vincular_outros_view") || canVincularOutros;
 
-  /**
-   * 👇 Regra final:
-   * - se globalPermissionKeys === null  → backend não sabe dessa feature → NÃO filtra dev (true)
-   * - se veio array (vazio ou com itens) → usa RBAC certinho
-   */
   const canViewDevsUsers =
     globalPermissionKeys === null ? true : canGlobal("view_devs_users");
 
@@ -291,8 +309,7 @@ useEffect(() => {
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-4 text-sm text-slate-700 flex flex-col gap-3">
           <div>{error}</div>
           <p className="text-xs text-slate-500">
-            Você pode criar uma nova empresa agora para começar a utilizar a
-            central.
+            Você pode criar uma nova empresa agora para começar a utilizar a central.
           </p>
         </div>
       )}

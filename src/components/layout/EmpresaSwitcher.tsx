@@ -1,7 +1,8 @@
 // src/components/layout/EmpresaSwitcher.tsx
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { api, ACCESS_TOKEN_KEY } from "../../lib/api";
+import { api, ACCESS_TOKEN_KEY, EMPRESA_ID_KEY } from "../../lib/api"; // ✅ importa o EMPRESA_ID_KEY
+
 import { useSession } from "../../contexts/SessionContext";
 
 type EmpresaMiniInfo = {
@@ -117,49 +118,53 @@ export function EmpresaSwitcher() {
     };
   }, [empresaId]);
 
-  async function handleSwitchEmpresa(nextEmpresaId: string) {
-    if (switching) return;
+    async function handleSwitchEmpresa(nextEmpresaId: string) {
+      if (switching) return;
 
-    if (!nextEmpresaId || nextEmpresaId === currentEmpresaId) {
-      setOpen(false);
-      return;
+      if (!nextEmpresaId || nextEmpresaId === currentEmpresaId) {
+        setOpen(false);
+        return;
+      }
+
+      try {
+        setSwitching(true);
+        setOpen(false);
+        setEmpresaInfo(null);
+
+        const res = await api.post(
+          "/auth/switch-empresa",
+          {
+            empresaId: nextEmpresaId, // ✅ backend exige isso
+          },
+          {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+            params: { _ts: Date.now() },
+          }
+        );
+
+        const newToken = res.data?.accessToken || res.data?.token;
+        if (!newToken) throw new Error("Token não retornado em /auth/switch-empresa");
+
+        localStorage.setItem(ACCESS_TOKEN_KEY, newToken);
+        api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+
+        localStorage.setItem(EMPRESA_ID_KEY, nextEmpresaId);
+        setEmpresaId(nextEmpresaId);
+      } catch (err: any) {
+        console.error("[EmpresaSwitcher] erro ao trocar empresa:", err);
+        alert(
+          err?.response?.data?.error ||
+            err?.message ||
+            "Erro ao trocar de empresa."
+        );
+      } finally {
+        setSwitching(false);
+      }
     }
 
-    try {
-      setSwitching(true);
-
-      // ✅ fecha dropdown logo pra UX ficar esperta
-      setOpen(false);
-
-      // ✅ opcional: limpa empresaInfo pra não mostrar "fantasma"
-      setEmpresaInfo(null);
-
-      // ✅ troca oficial: backend devolve token novo
-      const res = await api.post("/auth/switch-empresa", {
-        empresaId: nextEmpresaId,
-      });
-
-      const newToken = res.data?.accessToken;
-      if (!newToken)
-        throw new Error("Token não retornado em /auth/switch-empresa");
-
-      // 1) Atualiza token imediatamente
-      localStorage.setItem(ACCESS_TOKEN_KEY, newToken);
-      api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
-
-      // 2) Atualiza empresa no contexto (isso dispara teus effects globais)
-      setEmpresaId(nextEmpresaId);
-    } catch (err: any) {
-      console.error("[EmpresaSwitcher] erro ao trocar empresa:", err);
-      alert(
-        err?.response?.data?.error ||
-          err?.message ||
-          "Erro ao trocar de empresa."
-      );
-    } finally {
-      setSwitching(false);
-    }
-  }
 
   return (
     <div className="border-b border-slate-800 bg-slate-900">
