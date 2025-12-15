@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../../contexts/SessionContext";
 
 const DUE_DAY = 15;
-const REMIND_DAYS = [5, 2, 1] as const;
+const REMIND_DAYS = [5, 2, 1, 0]  as const;
 
 function pad2(n: number) {
   return String(n).padStart(2, "0");
