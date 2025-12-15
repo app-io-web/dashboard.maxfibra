@@ -54,6 +54,18 @@ export function AppLayout() {
     };
   }, []);
 
+  useEffect(() => {
+    function onAuthKilled() {
+      // se alguém limpou o token (401), manda pra login
+      const token = localStorage.getItem("central_access_token");
+      if (!token) window.location.hash = "#/login";
+    }
+
+    window.addEventListener("storage", onAuthKilled);
+    return () => window.removeEventListener("storage", onAuthKilled);
+  }, []);
+
+
   if (isTabletPortrait) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-100 p-6 text-center">

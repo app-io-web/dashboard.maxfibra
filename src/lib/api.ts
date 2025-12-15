@@ -82,33 +82,29 @@ api.interceptors.request.use((config) => {
 
 
 
-// ✅ Interceptor de RESPONSE:
-// - em DEV: não apaga token nem redireciona (pra não virar inferno)
-// - em PROD: apaga token e manda pro /login
+// src/lib/api.ts
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
-    const url = error?.config?.url;
 
     if (status === 401 && typeof window !== "undefined") {
-      const isDev = import.meta.env.DEV;
+      // limpa SEMPRE (dev/prod) pra estado não ficar zumbi
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      localStorage.removeItem(EMPRESA_ID_KEY);
 
-      if (isDev) {
-        // 👇 ajuda MUITO a achar a causa real
-        // (ex.: token expirado, secret mudou, request sem login, etc.)
-        console.warn("[API] 401 em DEV:", url);
-      } else {
-        localStorage.removeItem(ACCESS_TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
-        localStorage.removeItem(EMPRESA_ID_KEY);
+      // ✅ HashRouter -> rota real é "#/login"
+      const isAlreadyLogin =
+        window.location.hash === "#/login" || window.location.hash.startsWith("#/login?");
 
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
-        }
+      if (!isAlreadyLogin) {
+        // mantém o mesmo "document", só troca a hash
+        window.location.hash = "#/login";
       }
     }
 
     return Promise.reject(error);
   }
 );
+

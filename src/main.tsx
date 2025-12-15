@@ -21,16 +21,12 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   </React.StrictMode>
 );
 
-// Registro do Service Worker para push notifications
+// main.tsx
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
+    const swUrl = `${import.meta.env.BASE_URL}service-worker.js`;
     navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((registration) => {
-        //console.log("[SW] Registrado com sucesso:", registration.scope);
-      })
-      .catch((err) => {
-        console.error("[SW] Erro ao registrar Service Worker:", err);
-      });
+      .register(swUrl)
+      .catch((err) => console.error("[SW] Erro ao registrar Service Worker:", err));
   });
 }

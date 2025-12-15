@@ -20,6 +20,26 @@ export type LoginResponse = {
   accessToken: string;
 };
 
+function decodeJwtPayload(token: string): any | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
+        .join("")
+    );
+
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -38,7 +58,19 @@ export function getCurrentUser(): AuthUser | null {
 }
 
 export function isAuthenticated(): boolean {
-  return !!getAccessToken();
+  if (typeof window === "undefined") return false;
+
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (!token) return false;
+
+  if (isTokenExpired(token)) {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem("central_user");
+    localStorage.removeItem("central_admin_empresa_id");
+    return false;
+  }
+
+  return true;
 }
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
@@ -74,3 +106,12 @@ export function logout() {
   }
   delete api.defaults.headers.common["Authorization"];
 }
+
+
+export function isTokenExpired(token: string): boolean {
+  const payload = decodeJwtPayload(token);
+  const exp = payload?.exp; // em segundos
+  if (!exp || typeof exp !== "number") return false; // se não tiver exp, não crava expiração
+  return Date.now() >= exp * 1000;
+}
+
