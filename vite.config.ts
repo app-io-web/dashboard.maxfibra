@@ -1,18 +1,26 @@
 // vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import path from "node:path";
 
 export default defineConfig({
-  // Como você vai usar domínio custom (www.admin.center.appsy.app.br),
-  // o base pode ser "/"
   base: "/",
-
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+    // ✅ garante que React/ReactDOM não “duplicam por caminho”
+    dedupe: ["react", "react-dom"],
+  },
+
+  // ✅ ajuda o prebundle do Vite a não fazer magia negra
+  optimizeDeps: {
+    include: ["react", "react-dom"],
+  },
 
   server: {
     proxy: {
-      // DEV ONLY: em produção (GitHub Pages) isso aqui não existe,
-      // quem aponta pro backend é o próprio domínio do backend
       "/api": {
         target: "http://localhost:4200",
         changeOrigin: true,
@@ -23,6 +31,13 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/site-api": {
+        target: "http://localhost:3333",
+        changeOrigin: true,
+        secure: false,
+        // sem rewrite
+      },
+
     },
   },
 });

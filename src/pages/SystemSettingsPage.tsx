@@ -7,6 +7,7 @@ import { MonitoringSmartOltSection } from "../components/system-config/Monitorin
 import { UserPermissionRbacSection } from "../components/system-config/UserPermissionRbacSection";
 import { SystemPermissionProfilesSection } from "../components/system-config/SystemPermissionProfilesSection";
 import { SystemLicensesSection } from "../components/system-config/SystemLicensesSection";
+import { SiteConfigSection } from "../components/system-config/SiteConfigSection";
 
 import {
   Cog,
@@ -17,9 +18,10 @@ import {
   ShieldCheck,
   Users,
   Ticket,
+  Globe
 } from "lucide-react";
 
-type SystemSettingsTab = "dashboard" | "tools" | "monitoring";
+type SystemSettingsTab = "dashboard" | "tools" | "monitoring" | "site";
 type ToolsSubTab =
   | "tools-main"
   | "user-permissions"
@@ -49,13 +51,20 @@ export function SystemSettingsPage() {
         </div>
       </header>
 
-      {/* Abas principais (white theme) */}
       <div className="border-b border-slate-200">
-        <nav className="flex gap-2">
+        <nav
+          className="
+            flex items-center gap-2
+            overflow-x-auto pb-2
+            whitespace-nowrap
+            [-ms-overflow-style:none] [scrollbar-width:thin]
+          "
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           <button
             type="button"
             onClick={() => setActiveTab("dashboard")}
-            className={`inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
+            className={`shrink-0 inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
               ${
                 activeTab === "dashboard"
                   ? "bg-white text-slate-900 border-b-2 border-cyan-500 shadow-sm"
@@ -69,7 +78,7 @@ export function SystemSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("tools")}
-            className={`inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
+            className={`shrink-0 inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
               ${
                 activeTab === "tools"
                   ? "bg-white text-slate-900 border-b-2 border-cyan-500 shadow-sm"
@@ -83,7 +92,7 @@ export function SystemSettingsPage() {
           <button
             type="button"
             onClick={() => setActiveTab("monitoring")}
-            className={`inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
+            className={`shrink-0 inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
               ${
                 activeTab === "monitoring"
                   ? "bg-white text-slate-900 border-b-2 border-cyan-500 shadow-sm"
@@ -93,8 +102,25 @@ export function SystemSettingsPage() {
             <Activity className="h-4 w-4" />
             Monitoramento
           </button>
+
+          {/* ✅ Força o "Site" a nunca sumir */}
+          <button
+            type="button"
+            onClick={() => setActiveTab("site")}
+            className={`shrink-0 inline-flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-medium transition
+              ${
+                activeTab === "site"
+                  ? "bg-white text-slate-900 border-b-2 border-cyan-500 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              }`}
+          >
+            <Globe className="h-4 w-4" />
+            Site
+          </button>
         </nav>
       </div>
+
+
 
       {/* Conteúdo */}
       <div className="mt-2 space-y-6">
@@ -183,6 +209,7 @@ export function SystemSettingsPage() {
                   Licenças
                 </button>
 
+
               </div>
             </div>
 
@@ -207,6 +234,9 @@ export function SystemSettingsPage() {
         )}
 
         {activeTab === "monitoring" && <MonitoringSmartOltSection />}
+
+        {activeTab === "site" && <SiteConfigSection />}
+
       </div>
     </div>
   );
