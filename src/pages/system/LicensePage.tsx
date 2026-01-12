@@ -14,8 +14,8 @@ import {
 import { api } from "../../lib/api"; // ✅ usa o axios central
 import { ContasPagas } from "../../components/license/ContasPagas";
 
-
-const RENEW_PRICE_LABEL = "R$ 1,90";
+const RENEW_PRICE_LABEL = "R$ 249,90";
+const LS_PENDING_KEY = "license_pix_pending";
 
 // util: data
 function formatDateBR(iso?: string | null) {
@@ -58,11 +58,18 @@ export function LicensePage() {
   const [pixLoading, setPixLoading] = useState(false);
   const [pixError, setPixError] = useState<string | null>(null);
   const [pixPayment, setPixPayment] = useState<PixPayment | null>(null);
-  const pollingRef = useRef<number | null>(null);
+  
+
+  const LS_PENDING_KEY = useMemo(() => {
+    return `license_pix_pending:${empresaId || "no_empresa"}`;
+  }, [empresaId]);
+
+
+  const statusPollingRef = useRef<number | null>(null);
   const verifyPollingRef = useRef<number | null>(null);
   const verifyingRef = useRef(false);
   const verifyAttemptsRef = useRef(0);
-
+  const verifyTargetRef = useRef<string | null>(null);
 
   const exp = useMemo(
     () => formatDateBR(licenseStatus?.expires_at),
@@ -75,7 +82,18 @@ export function LicensePage() {
 
   const empresaNome = empresaBranding?.display_name || "Empresa";
 
-    // ✅ condição expirada igual teu UI atual
+   const assignmentId = licenseStatus?.assignment_id || null;
+
+   const [verifyAssignmentId, setVerifyAssignmentId] = useState<string | null>(null);
+
+
+
+
+
+
+
+
+  // ✅ condição expirada igual teu UI atual
   const isExpiredUI = useMemo(() => {
     if (!licenseStatus?.has_license) return false;
     if (licenseStatus?.is_valid_now) return false;
@@ -92,15 +110,14 @@ export function LicensePage() {
   }, [licenseStatus]);
 
   const daysToExpire = useMemo(() => {
-  if (!licenseStatus?.expires_at) return null;
+    if (!licenseStatus?.expires_at) return null;
 
-  const expDate = new Date(licenseStatus.expires_at);
-  if (Number.isNaN(expDate.getTime())) return null;
+    const expDate = new Date(licenseStatus.expires_at);
+    if (Number.isNaN(expDate.getTime())) return null;
 
-  const diffMs = expDate.getTime() - Date.now();
-  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-}, [licenseStatus?.expires_at]);
-
+    const diffMs = expDate.getTime() - Date.now();
+    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  }, [licenseStatus?.expires_at]);
 
   const canRenewEarly = useMemo(() => {
     if (!licenseStatus?.has_license) return false;
@@ -113,11 +130,8 @@ export function LicensePage() {
     return false;
   }, [licenseStatus, isExpiredUI, daysToExpire]);
 
-
   // ✅ se NÃO está válida, a UI deve deixar gerar pix
   const canGeneratePixUI = canRenewEarly;
-
-  const assignmentId = licenseStatus?.assignment_id || null;
 
   const statusUI: StatusUI = useMemo(() => {
     if (!licenseStatus?.has_license) {
@@ -161,7 +175,6 @@ export function LicensePage() {
     };
   }, [licenseStatus, isExpiredUI]);
 
-
   const headerTitle = useMemo(() => {
     if (!licenseStatus?.has_license) return "Licença necessária para acesso";
     if (licenseStatus?.is_valid_now) return "Licença ativa";
@@ -182,16 +195,62 @@ export function LicensePage() {
     return "A licença foi criada, porém ainda está marcada como não paga. Aguardando confirmação.";
   }, [licenseStatus, exp]);
 
-  function stopVerifyPolling() {
-    if (pollingRef.current) {
-      window.clearInterval(pollingRef.current);
-      pollingRef.current = null;
+
+  function getPendingPix() {
+    try {
+      const raw = localStorage.getItem(LS_PENDING_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      const id = String(parsed?.assignmentId || "").trim();
+      if (!id) return null;
+
+      const ts = Number(parsed?.ts || 0);
+      if (ts && Date.now() - ts > 1000 * 60 * 60 * 12) {
+        localStorage.removeItem(LS_PENDING_KEY);
+        return null;
+      }
+      return id;
+    } catch {
+      return null;
     }
   }
 
-  function startPolling() {
-    stopVerifyPolling();
-    pollingRef.current = window.setInterval(async () => {
+  function setPendingPix(assId: string | null | undefined) {
+    if (!assId) return;
+    try {
+      localStorage.setItem(
+        LS_PENDING_KEY,
+        JSON.stringify({ assignmentId: assId, ts: Date.now() })
+      );
+    } catch {}
+    setVerifyAssignmentId(String(assId));
+  }
+
+  function clearPendingPix() {
+    try { localStorage.removeItem(LS_PENDING_KEY); } catch {}
+    setVerifyAssignmentId(null);
+  }
+
+
+
+  function hasPendingPix() {
+    return !!getPendingPix();
+  }
+
+
+  // =========================
+  // Status polling (licenseStatus)
+  // =========================
+  function stopStatusPolling() {
+    if (statusPollingRef.current) {
+      window.clearInterval(statusPollingRef.current);
+      statusPollingRef.current = null;
+    }
+  }
+
+  function startStatusPolling() {
+    stopStatusPolling();
+    statusPollingRef.current = window.setInterval(async () => {
       try {
         if (typeof refreshLicenseStatus === "function") {
           await refreshLicenseStatus();
@@ -200,16 +259,263 @@ export function LicensePage() {
     }, 3000);
   }
 
-  useEffect(() => {
-    if (licenseStatus?.is_valid_now && isRenewModalOpen) {
-      setIsRenewModalOpen(false);
-      setPixPayment(null);
-      setPixError(null);
-      stopVerifyPolling();
+  // =========================
+  // Pix verify polling
+  // =========================
+  function stopPixVerifyPolling() {
+    if (verifyPollingRef.current) {
+      window.clearInterval(verifyPollingRef.current);
+      verifyPollingRef.current = null;
     }
-  }, [licenseStatus?.is_valid_now, isRenewModalOpen]);
+    verifyingRef.current = false;
+    verifyAttemptsRef.current = 0;
+  }
 
-  useEffect(() => () => stopVerifyPolling(), []);
+  async function checkLicenseAndCloseIfValid() {
+    try {
+      // pega o status direto (sem depender do Context)
+      const r = await api.get("/system/license/status", {
+        params: { _ts: Date.now() },
+      });
+
+      const isValid = !!r.data?.is_valid_now;
+
+      if (isValid) {
+        // ✅ fecha modal instantâneo
+        setIsRenewModalOpen(false);
+        setPixPayment(null);
+        setPixError(null);
+
+        stopPixVerifyPolling();
+        stopStatusPolling();
+        clearPendingPix();
+
+        if (typeof refreshLicenseStatus === "function") {
+          await refreshLicenseStatus();
+        }
+      }
+    } catch {
+      // silêncio — se falhar uma vez, a próxima tentativa pega
+    }
+  }
+
+  async function verifyOnce(overrideAssignmentId?: string) {
+    const idToVerify =
+      overrideAssignmentId ||
+      verifyAssignmentId ||
+      getPendingPix() ||
+      assignmentId;
+
+    if (!idToVerify) return { status: "ERROR" as const };
+
+    try {
+      const r = await api.post(
+        `/system/license-assignments/${idToVerify}/pix/verify`,
+        {},
+        { params: { _ts: Date.now() } }
+      );
+
+      const st = String(r.data?.status || "").toUpperCase();
+
+      if (st === "PAID" || st === "CONFIRMED") {
+        setPixError(null);
+        setPixPayment(null);
+        setIsRenewModalOpen(false);
+
+        stopPixVerifyPolling();
+        stopStatusPolling();
+        clearPendingPix();
+
+        if (typeof refreshLicenseStatus === "function") {
+          await refreshLicenseStatus();
+        }
+        setTimeout(() => {
+          if (typeof refreshLicenseStatus === "function") refreshLicenseStatus();
+        }, 1200);
+      } else {
+        if (typeof refreshLicenseStatus === "function") {
+          await refreshLicenseStatus();
+        }
+      }
+
+      return { status: st };
+    } catch (e: any) {
+      return {
+        status: "ERROR",
+        error: e?.response?.data?.error || e?.message || "Erro ao verificar Pix.",
+      };
+    }
+  }
+
+
+
+  function startPixVerifyPolling() {
+    stopPixVerifyPolling();
+
+    const isPaidStatus = (s: any) => {
+      const st = String(s || "").toUpperCase();
+      return st === "PAID" || st === "CONFIRMED" || st === "PAID_CONFIRMED";
+    };
+
+    // Roda verify imediatamente (bom pra feedback rápido)
+    void (async () => {
+      await verifyOnce();
+      // REMOVIDO: não chama checkLicenseAndCloseIfValid aqui
+      // Se já estiver pago, o verifyOnce já fecha tudo
+    })();
+
+    // Polling a cada 2s
+    verifyPollingRef.current = window.setInterval(async () => {
+      if (verifyingRef.current) return;
+      verifyingRef.current = true;
+
+      try {
+        verifyAttemptsRef.current += 1;
+
+        const result = await verifyOnce();
+
+        // Só deixa o verifyOnce cuidar do fechamento quando PAID
+        // NÃO chama checkLicenseAndCloseIfValid() em caso de PENDING
+        // Porque isso estava fechando a modal indevidamente
+
+      } finally {
+        verifyingRef.current = false;
+      }
+    }, 2000);
+  }
+
+
+  // =========================
+  // Fecha modal quando ficar válida (e limpa tudo)
+  // =========================
+  const prevValidRef = useRef<boolean>(!!licenseStatus?.is_valid_now);
+
+useEffect(() => {
+  const prev = prevValidRef.current;
+  const nowValid = !!licenseStatus?.is_valid_now;
+  prevValidRef.current = nowValid;
+
+  if (!prev && nowValid) {
+    // ✅ confirmou pagamento/ativou
+    if (isRenewModalOpen) setIsRenewModalOpen(false);
+
+    setPixPayment(null);
+    setPixError(null);
+
+    stopPixVerifyPolling();
+    stopStatusPolling();
+    clearPendingPix();
+  }
+}, [licenseStatus?.is_valid_now, isRenewModalOpen]);
+
+  // =========================
+  // Cleanup on unmount
+  // =========================
+  useEffect(() => {
+    return () => {
+      stopPixVerifyPolling();
+      stopStatusPolling();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // =========================
+  // Se existe pendência salva, continua verificando mesmo sem modal
+  // =========================
+  useEffect(() => {
+    if (licenseStatus?.is_valid_now) {
+      stopPixVerifyPolling();
+      clearPendingPix();
+      return;
+    }
+
+    const pending = getPendingPix();
+    if (pending) {
+      setVerifyAssignmentId(pending);
+      startPixVerifyPolling();
+      startStatusPolling();
+      return;
+    }
+
+    // fallback: se não tem LS, mas existe assignmentId, ainda pode tentar polling
+    if (assignmentId) {
+      setVerifyAssignmentId(assignmentId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assignmentId, licenseStatus?.is_valid_now]);
+
+
+    const reconcileRanRef = useRef(false);
+
+  useEffect(() => {
+    if (reconcileRanRef.current) return;
+    reconcileRanRef.current = true;
+
+    let alive = true;
+
+    (async () => {
+      try {
+        // 1) tenta pegar do localStorage primeiro (mais rápido)
+        const lsPending = getPendingPix();
+        if (lsPending) {
+          setVerifyAssignmentId(lsPending);
+        }
+
+        // 2) sempre checa backend também (F5 sem LS / outro device / etc.)
+        const pend = await api.get("/system/license-payments/pending", {
+          params: { _ts: Date.now() },
+        });
+
+        const items = Array.isArray(pend.data?.items) ? pend.data.items : [];
+        const ids = Array.from(
+          new Set(
+            items
+              .map((x: any) => String(x?.assignment_id || "").trim())
+              .filter(Boolean)
+          )
+        );
+
+        // inclui o LS também
+        if (lsPending && !ids.includes(lsPending)) ids.unshift(lsPending);
+
+        // nada pendente -> sai
+        if (!ids.length) return;
+
+        // 3) verifica cada pendência (sequencial pra não virar metralhadora)
+        let someonePaid = false;
+
+        for (const id of ids) {
+          if (!alive) return;
+
+          const out = await verifyOnce(id);
+          const st = String(out?.status || "").toUpperCase();
+
+          if (st === "PAID" || st === "CONFIRMED") {
+            someonePaid = true;
+          }
+        }
+
+        // 4) se alguém pagou, dá refresh no status
+        if (someonePaid && typeof refreshLicenseStatus === "function") {
+          await refreshLicenseStatus();
+        }
+
+        // 5) se ainda tem pendência, deixa o polling rodando
+        if (!licenseStatus?.is_valid_now) {
+          startPixVerifyPolling();
+          startStatusPolling();
+        }
+      } catch (e) {
+        console.warn("[PIX RECONCILE ON LOAD] falhou", e);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   async function createPixCharge() {
     if (!assignmentId) {
@@ -221,33 +527,52 @@ export function LicensePage() {
     setPixError(null);
 
     try {
-      // ✅ Axios com interceptors (Authorization + x-empresa-id)
       const res = await api.post(
         `/system/license-assignments/${assignmentId}/pix`,
         {},
         { params: { _ts: Date.now() } }
       );
 
-      const payment = res.data?.payment || null;
-
-      // ✅ se vier reused/already_paid etc
       if (res.data?.already_paid) {
         setPixError("Essa licença já está marcada como paga.");
         return;
       }
 
-      // ✅ valida retorno
+      const payment = res.data?.payment || null;
+
       if (!payment?.brcode && !payment?.qrcode_image) {
-        // manda um erro mais útil pro debug
         throw new Error(
-          `Cobrança gerada, mas não veio QR/BR Code no retorno. (keys: ${Object.keys(
-            payment || {}
-          ).join(", ") || "vazio"})`
+          `Cobrança gerada, mas não veio QR/BR Code no retorno. (keys: ${
+            Object.keys(payment || {}).join(", ") || "vazio"
+          })`
         );
       }
 
       setPixPayment(payment);
-      startVerifyPolling(); // ✅ agora verifica a Efí automaticamente
+
+      // ✅ pega o assignment “de verdade”
+      const newAssignmentId = String(res.data?.assignment_id || assignmentId);
+
+      // ✅ TRAVA o alvo do verify (não deixa trocar no meio do caminho)
+      verifyTargetRef.current = newAssignmentId;
+
+      // ✅ salva pendência + já seta verifyAssignmentId
+      setPendingPix(newAssignmentId);
+
+      // ✅ já roda um verify imediato no ID correto (sem esperar timer)
+      await verifyOnce(newAssignmentId);
+
+      // ✅ mantém os pollings rodando (mesmo se fechar o modal)
+      startPixVerifyPolling();
+      startStatusPolling();
+
+      // ❌ REMOVIDO: essa chamada estava fechando a modal cedo demais
+      // void checkLicenseAndCloseIfValid();
+
+      // OPCIONAL: se quiser uma checagem mais tardia (ex: 3-5s depois), descomente:
+      // setTimeout(() => {
+      //   void checkLicenseAndCloseIfValid();
+      // }, 4000);
 
     } catch (e: any) {
       const msg =
@@ -258,80 +583,6 @@ export function LicensePage() {
     } finally {
       setPixLoading(false);
     }
-  }
-
-  function stopVerifyPolling() {
-    if (verifyPollingRef.current) {
-      window.clearInterval(verifyPollingRef.current);
-      verifyPollingRef.current = null;
-    }
-    verifyingRef.current = false;
-    verifyAttemptsRef.current = 0;
-  }
-
-  async function verifyOnce() {
-    if (!assignmentId) return { status: "ERROR" as const };
-
-    try {
-      const r = await api.post(
-        `/system/license-assignments/${assignmentId}/pix/verify`,
-        {},
-        { params: { _ts: Date.now() } }
-      );
-
-      const st = String(r.data?.status || "").toUpperCase();
-
-      // Atualiza o status na tela (puxa do backend)
-      if (typeof refreshLicenseStatus === "function") {
-        await refreshLicenseStatus();
-      }
-
-      return { status: st as string };
-    } catch (e: any) {
-      return {
-        status: "ERROR",
-        error: e?.response?.data?.error || e?.message || "Erro ao verificar Pix.",
-      };
-    }
-  }
-
-  function startVerifyPolling() {
-    stopVerifyPolling();
-
-    // roda 1x imediatamente
-    void (async () => {
-      const first = await verifyOnce();
-      if (first.status === "PAID" || first.status === "CONFIRMED") {
-        stopVerifyPolling();
-      }
-    })();
-
-    verifyPollingRef.current = window.setInterval(async () => {
-      if (verifyingRef.current) return; // anti-overlap
-      verifyingRef.current = true;
-
-      try {
-        verifyAttemptsRef.current += 1;
-
-        const result = await verifyOnce();
-        const st = String(result.status || "").toUpperCase();
-
-        // ✅ confirmou -> para
-        if (st === "PAID" || st === "CONFIRMED") {
-          stopVerifyPolling();
-          return;
-        }
-
-        // opcional: depois de um tempo dá uma dica sem spam
-        if (verifyAttemptsRef.current === 30) {
-          setPixError(
-            "Ainda aguardando confirmação na Efí. Pode levar alguns minutos. Vou continuar verificando."
-          );
-        }
-      } finally {
-        verifyingRef.current = false;
-      }
-    }, 6000);
   }
 
 
@@ -351,8 +602,6 @@ export function LicensePage() {
   return (
     <div className="min-h-[calc(100vh-64px)] bg-slate-50 p-4 md:p-6">
       <div className="mx-auto w-full max-w-3xl">
-
-        
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-30px_rgba(2,6,23,0.35)]">
           {/* Header */}
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -361,8 +610,7 @@ export function LicensePage() {
                 Licença do sistema
               </h1>
               <p className="text-sm text-slate-600">
-                {empresaNome} •{" "}
-                {empresaId ? `ID ${empresaId}` : "ID indisponível"}
+                {empresaNome} • {empresaId ? `ID ${empresaId}` : "ID indisponível"}
               </p>
             </div>
 
@@ -379,12 +627,15 @@ export function LicensePage() {
             </div>
           </div>
 
-        {daysToExpire !== null && daysToExpire <= 5 && daysToExpire > 0 && (
-                  <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                    ⚠️ Sua licença vence em <strong>{daysToExpire} dia{daysToExpire > 1 ? "s" : ""}</strong>.
-                    Já é possível renovar.
-                  </div>
-                )}
+          {daysToExpire !== null && daysToExpire <= 5 && daysToExpire > 0 && (
+            <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              ⚠️ Sua licença vence em{" "}
+              <strong>
+                {daysToExpire} dia{daysToExpire > 1 ? "s" : ""}
+              </strong>
+              . Já é possível renovar.
+            </div>
+          )}
 
           {/* Content card */}
           <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -422,7 +673,6 @@ export function LicensePage() {
             </div>
           </div>
 
-
           {/* Actions */}
           <div className="mt-4 flex flex-wrap gap-2">
             {canGeneratePixUI && (
@@ -437,12 +687,8 @@ export function LicensePage() {
               >
                 <FiRefreshCw className="h-4 w-4" />
                 {isExpiredUI ? "Renovar licença" : "Gerar Pix"}
-
-
-                
               </button>
             )}
-
           </div>
 
           <div className="mt-4 flex items-start gap-2 rounded-xl border border-slate-200 bg-white p-3">
@@ -469,9 +715,11 @@ export function LicensePage() {
           <button
             type="button"
             className="absolute inset-0 bg-black/40"
-            onClick={() => {
+            onClick={async () => {
+              // ✅ fecha modal, mas NÃO mata o verify
               setIsRenewModalOpen(false);
-              stopVerifyPolling();
+              // best-effort: tenta 1x pra não depender do timer
+              await verifyOnce();
             }}
             aria-label="Fechar"
           />
@@ -483,16 +731,15 @@ export function LicensePage() {
                   Renovar licença
                 </h3>
                 <p className="mt-1 text-sm text-slate-600">
-                  Valor:{" "}
-                  <span className="font-semibold">{RENEW_PRICE_LABEL}</span>
+                  Valor: <span className="font-semibold">{RENEW_PRICE_LABEL}</span>
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   setIsRenewModalOpen(false);
-                  stopVerifyPolling();
+                  await verifyOnce();
                 }}
                 className="rounded-xl p-2 text-slate-500 hover:bg-slate-50"
                 aria-label="Fechar modal"
@@ -505,8 +752,7 @@ export function LicensePage() {
               <div className="mt-4">
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
                   <div className="text-xs text-slate-600">
-                    Empresa:{" "}
-                    <span className="font-semibold">{empresaNome}</span>
+                    Empresa: <span className="font-semibold">{empresaNome}</span>
                   </div>
                   <div className="text-xs text-slate-600">
                     Plano:{" "}
@@ -516,7 +762,7 @@ export function LicensePage() {
                   </div>
                   {exp && (
                     <div className="text-xs text-slate-600">
-                      Expirou em: <span className="font-semibold">{exp}</span>
+                      Expira em: <span className="font-semibold">{exp}</span>
                     </div>
                   )}
                 </div>
@@ -538,8 +784,7 @@ export function LicensePage() {
                 </button>
 
                 <p className="mt-3 text-[12px] leading-relaxed text-slate-500">
-                  Ao gerar o Pix, vamos mostrar o QR Code e o “copia e cola”
-                  aqui.
+                  Ao gerar o Pix, vamos mostrar o QR Code e o “copia e cola” aqui.
                 </p>
               </div>
             )}
@@ -588,8 +833,7 @@ export function LicensePage() {
                 )}
 
                 <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3 text-[12px] text-slate-600">
-                  Estamos verificando automaticamente. Assim que confirmar, a
-                  licença ativa sozinha.
+                  Estamos verificando automaticamente. Assim que confirmar, a licença ativa sozinha.
                 </div>
 
                 {pixError && (
@@ -604,7 +848,9 @@ export function LicensePage() {
                     onClick={() => {
                       setPixPayment(null);
                       setPixError(null);
-                      stopVerifyPolling();
+                      stopPixVerifyPolling();
+                      stopStatusPolling();
+                      clearPendingPix();
                     }}
                     className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
                   >
@@ -618,31 +864,27 @@ export function LicensePage() {
                         setPixLoading(true);
                         setPixError(null);
 
-                        if (!assignmentId) {
-                          setPixError("assignment_id não encontrado.");
-                          return;
-                        }
-
-                        // ✅ chama o verify real no backend
                         const r = await api.post(
-                          `/system/license-assignments/${assignmentId}/pix/verify`,
-                          {},
-                          { params: { _ts: Date.now() } }
-                        );
+                              `/system/license-assignments/${verifyAssignmentId || assignmentId}/pix/verify`,
+                              {},
+                              { params: { _ts: Date.now() } }
+                            );
 
-                        const st = r.data?.status;
 
-                        // se ainda não confirmou, mostra status
+                        const st = String(r.data?.status || "").toUpperCase();
+
                         if (st === "PENDING") {
                           setPixError("Ainda não confirmou na Efí. Aguarde 1-2 min e tente novamente.");
                         } else {
-                          // ✅ atualiza status na tela
                           if (typeof refreshLicenseStatus === "function") {
                             await refreshLicenseStatus();
                           }
                         }
                       } catch (e: any) {
-                        const msg = e?.response?.data?.error || e?.message || "Erro ao verificar Pix.";
+                        const msg =
+                          e?.response?.data?.error ||
+                          e?.message ||
+                          "Erro ao verificar Pix.";
                         setPixError(msg);
                       } finally {
                         setPixLoading(false);
@@ -652,7 +894,6 @@ export function LicensePage() {
                   >
                     Verificar agora
                   </button>
-
                 </div>
               </div>
             )}
