@@ -74,6 +74,14 @@ export function normalizeUserRow(raw: any): EmpresaUserRow {
       ? raw.enabled
       : true;
 
+  // ✅ AQUI OS CAMPOS QUE ESTAVAM FALTANDO
+  const cpf = typeof raw?.cpf === "string" ? raw.cpf.trim() || null : null;
+
+  const data_nascimento =
+    typeof raw?.data_nascimento === "string" || typeof raw?.data_nascimento === "object"
+      ? raw.data_nascimento
+      : null;
+
   return {
     id,
     auth_user_id,
@@ -82,9 +90,10 @@ export function normalizeUserRow(raw: any): EmpresaUserRow {
     role,
     profession,
     is_enabled,
+    cpf,                    // ← ADICIONADO
+    data_nascimento,        // ← ADICIONADO
   };
 }
-
 // ajuda a filtrar perfis por nome/slug (case-insensitive)
 export function profileMatches(
   p: ProfileItem,

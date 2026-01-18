@@ -58,6 +58,8 @@ export function LoginPage() {
     setCapsOn(e.getModifierState?.("CapsLock") ?? false);
   }
 
+
+
   // Overlay login
   const LOGIN_OVERLAY_MIN_MS = 1400;
 
@@ -69,6 +71,33 @@ export function LoginPage() {
       { label: "Preparando seu painel…", done: false },
     ]
   );
+
+  const [cpfCheckEnabled, setCpfCheckEnabled] = useState(true);
+
+  const ADMIN_BYPASS_CODE = "ADMIN";
+
+
+
+
+  function formatCpf(value: string) {
+  // só números e no máx 11 dígitos
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+
+  // aplica máscara 000.000.000-00
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+  if (digits.length <= 9)
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+
+  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+}
+
+
+  function handleCpfChange(v: string) {
+    setCpf(formatCpf(v));
+  }
+
+
 
   function resetFirstAccessState() {
     setFullName("");
@@ -90,6 +119,57 @@ export function LoginPage() {
   function setAllDone() {
     setLoginOverlaySteps((prev) => prev.map((s) => ({ ...s, done: true })));
   }
+
+      React.useEffect(() => {
+    let buffer = "";
+    let lastTypeAt = 0;
+
+    function isTypingInEditableTarget(target: EventTarget | null) {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+
+      const tag = el.tagName?.toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return true;
+
+      // contenteditable (div editável etc.)
+      if (el.isContentEditable) return true;
+
+      return false;
+    }
+
+    function onKeyDown(e: KeyboardEvent) {
+      // não captura se estiver digitando em input/textarea/contenteditable
+      if (isTypingInEditableTarget(e.target)) return;
+
+      // ignora teclas que não "digitam" caracteres
+      if (e.key.length !== 1) return;
+
+      const now = Date.now();
+
+      // se ficar muito tempo sem digitar, reseta (evita buffer infinito)
+      if (now - lastTypeAt > 1500) buffer = "";
+      lastTypeAt = now;
+
+      buffer += e.key;
+
+      // limita tamanho do buffer
+      if (buffer.length > 64) buffer = buffer.slice(-64);
+
+      if (buffer.toLowerCase().endsWith(ADMIN_BYPASS_CODE.toLowerCase())) {
+        setCpfCheckEnabled(false);
+
+        // opcional: dá um feedback visual (se quiser)
+        // setSuccess("Modo admin: checagem de CPF desativada.");
+        // ou toast, etc.
+
+        buffer = ""; // limpa pra não disparar de novo
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    }, []);
+
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -132,15 +212,18 @@ export function LoginPage() {
       const cpfClean = cpf.replace(/\D/g, "");
 
       if (!firstAccessValidated) {
-        if (!fullName || !cpfClean || !birthDate) {
+        // ✅ Quando cpfCheckEnabled=false, a gente NÃO exige CPF nem valida CPF no front
+        if (!fullName || (!birthDate) || (cpfCheckEnabled && !cpfClean)) {
           setError("Preencha nome completo, CPF e data de nascimento.");
           return;
         }
 
         await api.post("/auth/first-access/validate", {
           full_name: fullName,
-          cpf: cpfClean,
+          cpf: cpfClean, // ✅ SEMPRE envia o CPF
           birth_date: birthDate,
+          // ✅ opcional (recomendado): backend ignora validação quando false
+          skip_cpf_validation: !cpfCheckEnabled,
         });
 
         setFirstAccessValidated(true);
@@ -163,10 +246,12 @@ export function LoginPage() {
 
         await api.post("/auth/first-access", {
           full_name: fullName,
-          cpf: cpfClean,
+          cpf: cpfClean, // ✅ SEMPRE envia o CPF
           birth_date: birthDate,
           email: firstAccessEmail,
           password: newPassword,
+          // ✅ opcional (recomendado): backend ignora validação quando false
+          skip_cpf_validation: !cpfCheckEnabled,
         });
 
         setSuccess("Acesso criado com sucesso! Agora você já pode fazer login com seu e-mail e a nova senha.");
@@ -190,6 +275,8 @@ export function LoginPage() {
       setSubmitting(false);
     }
   }
+
+
 
   const buttonLabel = (() => {
     if (submitting) {
@@ -279,8 +366,9 @@ export function LoginPage() {
                   maxLength={14}
                   placeholder="000.000.000-00"
                   value={cpf}
-                  onChange={setCpf}
+                  onChange={handleCpfChange}
                 />
+
 
                 <FormField
                   label="Data de nascimento"

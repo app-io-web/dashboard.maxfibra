@@ -4,15 +4,25 @@ import { api } from "../../lib/api";
 import { VincularUsuarioEmpresasModal } from "./VincularUsuarioEmpresasModal";
 
 type EmpresaUser = {
-  id: string;
+  id: string; // id do vínculo (central_user_empresas.id)
   auth_user_id: string;
-  display_name: string | null;
-  name?: string | null; // ✅ AQUI (vem do backend)
-  avatar_url: string | null;
-  is_central_admin: boolean;
+  name: string | null;
+  email: string | null;
+
+  cpf?: string | null;
+  data_nascimento?: string | null;
+  profession?: string | null;
+
   role: string | null;
+  is_enabled: boolean;
+
+  // esses podem nem vir nesse endpoint, deixa opcional
+  display_name?: string | null;
+  avatar_url?: string | null;
+  is_central_admin?: boolean;
   can_link_other_empresas?: boolean;
 };
+
 
 
 type EditFormState = {
@@ -66,8 +76,12 @@ export function EmpresaUsers({
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get("/empresa/users");
-        setUsers(res.data.users || []);
+      const res = await api.get("/empresa/users", {
+          headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+          params: { _ts: Date.now() },
+        });
+
+      setUsers(res.data.users || []);
       } catch (err: any) {
         console.error(err);
         setError("Erro ao carregar usuários");

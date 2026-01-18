@@ -99,6 +99,7 @@ export function useEmpresaUsers(params: {
     usersError,
     setUsersError,
     busyUserId,
+    setBusyUserId,        // ← APENAS ADICIONEI ESSA LINHA
     loadUsers,
     handleInactivate,
   };
